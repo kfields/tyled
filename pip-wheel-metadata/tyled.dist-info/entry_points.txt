@@ -1,0 +1,3 @@
+[console_scripts]
+tyled = tyled.command:cli
+

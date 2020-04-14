@@ -1,0 +1,8 @@
+firstgid = 0
+source = "tiles"
+name = "test"
+tilewidth = 128
+tileheight = 128
+spacing = 2
+margin = 2
+columns = 12
