@@ -24,8 +24,10 @@ def main(ts):
     canvas = Image.new('RGBA', (width, height), (255, 0, 0, 0))
 
     
-    for i in range(0, columns):
-        for j in range(0, rows):
+    for i in range(0, rows):
+        for j in range(0, columns):
+            if len(files) == 0:
+                break
             filename = files.pop(0)
             print(filename)
             

@@ -9,5 +9,8 @@
     >
 <image source="{{name}}.png" width="{{width}}" height="{{height}}"/>
 
+{% for tile in tiles %}
+{% include 'tile.xml' %}
+{% endfor %}
 
 </tileset>

@@ -1,8 +1,8 @@
-firstgid = 0
+firstgid = 1
 source = "tiles"
-name = "test"
+name = "tiles"
 tilewidth = 128
 tileheight = 128
-spacing = 2
-margin = 2
+spacing = 0
+margin = 0
 columns = 12
