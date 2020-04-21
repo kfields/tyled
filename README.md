@@ -1,6 +1,6 @@
 # Tyled :butterfly:
 
-CLI utility for generating Tiled Tilesets
+CLI utility for generating [Tiled](https://www.mapeditor.org/) Tilesets
 
 ## Quick Links
 
@@ -21,10 +21,6 @@ CLI utility for generating Tiled Tilesets
 If you don't already have it installed go to https://pypi.org/project/pipx/ for instructions
 
         pipx install tyled
-
-#### And then run it!
-
-        tyled run
 
 
 ### From GitHub
@@ -49,26 +45,87 @@ Install required packages
 
         pip install -r requirements.txt
 
+## Commands
 
-## Usage
+### Bake
 
-Activate the virtual environment, if not already active
+        tyled bake example.toml [--save/--no-save][--show/--no-show][--rotation/--no-rotation]
 
-        cd tyled
-        source env/bin/activate
-        
-Run the game
+#### Options
 
-        python run_game.py
+Default options are --save, --no-show, --no-rotation
 
-## Controls
+## Projects
 
-### Movement
+Tyled Projects are defined using TOML files.
 
-WASD + cursor keys
-Press down to mount/dismount
-Press up to do an Ollie! :)
+All Projects must at least have a name and type
 
-### Pause/Menu
+```toml
+name = 'mycollection'
+type = 'collection'
+```
 
-Escape key
+### Options
+
+Options may be defined within the project file.  Any options defined here will override the command line options
+
+```toml
+[options]
+rotation = true
+```
+
+## Tilesets
+
+Tyled currently supports three different kinds of Tilesets:
+
+### Collection Tileset
+
+A Collection Tileset is composed of tiles with images stored in separate files
+
+```toml
+name = 'collection'
+type = 'collection'
+
+firstgid = 1
+source = 'sticker-knight/map'
+```
+
+This example will generate {name}.tsx in the current working directory
+
+### Orthogonal Tileset
+
+An Orthogonal Tileset is composed of tiles that have the same dimensions in one image file
+
+```toml
+name = 'orthogonal'
+type = 'orthogonal'
+
+firstgid = 1
+source = 'platformer/tiles'
+tilewidth = 128
+tileheight = 128
+spacing = 0
+margin = 0
+columns = 12
+```
+
+This example will generate {name}.tsx and {name}.png in the current working directory
+
+### Atlas Tileset
+
+An Atlas Tileset is composed of tiles that do not have the same dimensions in one image file
+
+```toml
+name = 'atlas'
+type = 'atlas'
+
+firstgid = 0
+source = 'sticker-knight/map'
+width = 1024
+height = 1024
+spacing = 0
+margin = 0
+```
+
+This example will generate {name}.tsx and {name}.png in the current working directory

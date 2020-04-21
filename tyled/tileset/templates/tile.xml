@@ -1,0 +1,2 @@
+    <tile id="{{tile.id}}" type="{{tile.type}}">
+    </tile>

@@ -1,5 +1,0 @@
-    <tile id="{{tile.id}}">
-        <properties>
-            <property name="kind" value="{{tile.kind}}"/>
-        </properties>
-    </tile>

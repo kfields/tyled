@@ -1,0 +1,3 @@
+    <tile id="{{tile.id}}" type="{{tile.type}}">
+        <image x="{{tile.x}}" y="{{tile.y}}" width="{{tile.width}}" height="{{tile.height}}" angle="{{tile.angle}}"/>
+    </tile>

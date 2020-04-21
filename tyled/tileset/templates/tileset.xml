@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tileset
+    version="{{version}}"
+    tiledversion="{{tiledversion}}"
+    name="{{name}}"
+    tilewidth="{{tilewidth}}"
+    tileheight="{{tileheight}}" 
+    tilecount="{{tilecount}}" 
+    columns="{{columns}}"
+    margin="{{margin}}"
+    spacing="{{spacing}}"
+    >
+
+{% include 'header.xml' %}
+
+{% for tile in tiles %}
+{% include 'tile.xml' %}
+{% endfor %}
+
+</tileset>

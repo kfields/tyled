@@ -1,0 +1,11 @@
+type = 'atlas'
+firstgid = 0
+source = "sticker-knight/map"
+name = "atlas_rotation"
+width = 1024
+height = 1024
+spacing = 0
+margin = 0
+
+[options]
+rotation = true

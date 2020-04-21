@@ -1,0 +1,10 @@
+name = 'orthogonal'
+type = 'orthogonal'
+
+firstgid = 1
+source = 'platformer/tiles'
+tilewidth = 128
+tileheight = 128
+spacing = 0
+margin = 0
+columns = 12

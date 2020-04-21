@@ -1,0 +1,1 @@
+from tyled.tileset.atlas.atlas import AtlasTileset

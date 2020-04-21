@@ -1,0 +1,1 @@
+from tyled.tileset.collection.collection import CollectionTileset

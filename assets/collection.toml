@@ -1,0 +1,5 @@
+name = 'collection'
+type = 'collection'
+
+firstgid = 1
+source = 'sticker-knight/map'
