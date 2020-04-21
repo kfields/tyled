@@ -23,6 +23,6 @@ Generate the Tileset
 
 .. code:: bash
 
-        tyled bake example.toml
+        tyled bake mytileset.toml
 
 This example will generate mytileset.tsx and mytileset.png in the current working directory

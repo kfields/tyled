@@ -49,7 +49,7 @@ Install required packages
 
 ### Bake
 
-        tyled bake example.toml [--save/--no-save][--show/--no-show][--rotation/--no-rotation]
+        tyled bake mytileset.toml [--save/--no-save][--show/--no-show][--rotation/--no-rotation]
 
 #### Options
 
@@ -62,7 +62,7 @@ Tyled Projects are defined using TOML files.
 All Projects must at least have a name and type
 
 ```toml
-name = 'mycollection'
+name = 'mytileset'
 type = 'collection'
 ```
 
@@ -84,21 +84,21 @@ Tyled currently supports three different kinds of Tilesets:
 A Collection Tileset is composed of tiles with images stored in separate files
 
 ```toml
-name = 'collection'
+name = 'mytileset'
 type = 'collection'
 
 firstgid = 1
 source = 'sticker-knight/map'
 ```
 
-This example will generate {name}.tsx in the current working directory
+This example will generate mytileset.tsx in the current working directory
 
 ### Orthogonal Tileset
 
 An Orthogonal Tileset is composed of tiles that have the same dimensions in one image file
 
 ```toml
-name = 'orthogonal'
+name = 'mytileset'
 type = 'orthogonal'
 
 firstgid = 1
@@ -110,14 +110,14 @@ margin = 0
 columns = 12
 ```
 
-This example will generate {name}.tsx and {name}.png in the current working directory
+This example will generate mytileset.tsx and mytileset.png in the current working directory
 
 ### Atlas Tileset
 
 An Atlas Tileset is composed of tiles that do not have the same dimensions in one image file
 
 ```toml
-name = 'atlas'
+name = 'mytileset'
 type = 'atlas'
 
 firstgid = 0
@@ -128,4 +128,4 @@ spacing = 0
 margin = 0
 ```
 
-This example will generate {name}.tsx and {name}.png in the current working directory
+This example will generate mytileset.tsx and mytileset.png in the current working directory

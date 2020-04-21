@@ -8,7 +8,7 @@ All Projects must at least have a name and type
 
 .. code-block:: toml
 
-    name = 'mycollection'
+    name = 'mytileset'
     type = 'collection'
 
 
