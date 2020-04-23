@@ -35,7 +35,7 @@ setup(
     entry_points={"console_scripts": ["tyled = tyled.command:cli"]},
     author="Kurtis Fields",
     author_email="kurtisfields@gmail.com",
-    description="Skateboarder/Platformer/Lepidopterist Game using Arcade & Pymunk",
+    description="Tiled Utilities",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/kfields/tyled",

@@ -2,8 +2,6 @@
 
 CLI utility for generating [Tiled](https://www.mapeditor.org/) Tilesets
 
-## Quick Links
-
 :notebook: [Documentation](https://tyled.readthedocs.io/en/latest/)
 
 :package: [Package](https://pypi.org/project/tyled/)

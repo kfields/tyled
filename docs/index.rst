@@ -3,6 +3,10 @@ Tyled |:butterfly:|
 
 CLI utility for generating Tiled_ Tilesets
 
+|:octopus:| Source_
+
+|:package:| Package_
+
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
@@ -24,3 +28,5 @@ Indices and tables
 * :ref:`search`
 
 .. _Tiled: https://www.mapeditor.org/
+.. _Source: https://github.com/kfields/tyled
+.. _Package: https://pypi.org/project/tyled/
