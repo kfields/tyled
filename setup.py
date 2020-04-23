@@ -35,7 +35,7 @@ setup(
     entry_points={"console_scripts": ["tyled = tyled.command:cli"]},
     author="Kurtis Fields",
     author_email="kurtisfields@gmail.com",
-    description="Tiled Utilities",
+    description="CLI utility for generating Tiled Tilesets",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/kfields/tyled",
