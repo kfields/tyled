@@ -1,9 +1,21 @@
-# pyproject.toml
+[tool.poetry]
+name = "tyled"
+version = "0.2.0"
+description = ""
+authors = ["Kurtis Fields <kurtisfields@gmail.com>"]
+readme = "README.md"
 
-# For future use I guess ...
+[tool.poetry.dependencies]
+python = ">=3.8, <3.12"
+click = "^8.1.3"
+pillow = "^9.3.0"
+toml = "^0.10.2"
+jinja2 = "^3.1.2"
+rectpack = "^0.2.2"
+
+[tool.poetry.scripts]
+tyled = "tyled.command:cli"
 
 [build-system]
-requires = ["setuptools>=42", "wheel", "setuptools_scm[toml]>=3.4"]
-
-[tool.setuptools_scm]
-write_to = "tyled/version.py"
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

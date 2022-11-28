@@ -1,9 +1,5 @@
-import sys
 import os
 import glob
-
-import jinja2
-from PIL import Image
 
 from tyled.tileset import Tile, Tileset
 
