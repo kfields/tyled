@@ -3,10 +3,11 @@ import glob
 
 from tyled.tileset import Tile, Tileset
 
+
 class CollectionTileset(Tileset):
     def __init__(self, *initial_data, **kwargs):
         super().__init__(*initial_data, **kwargs)
-        self.add_template_path('collection/templates')
+        self.add_template_path("collection/templates")
 
     @classmethod
     def create(self, *initial_data, **kwargs):
@@ -30,4 +31,4 @@ class CollectionTileset(Tileset):
             base = os.path.basename(file)
             kind = os.path.splitext(base)[0]
             self.tiles.append(Tile(file, gid, kind))
-            gid +=1
+            gid += 1

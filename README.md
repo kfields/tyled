@@ -114,6 +114,29 @@ This example will generate mytileset.tsx and mytileset.png in the current workin
 
 An Atlas Tileset is composed of tiles that do not have the same dimensions in one image file
 
+The source is a folder that contains multiple images
+
+```toml
+name = 'mytileset'
+type = 'atlas'
+
+firstgid = 0
+source = 'sticker-knight/map'
+width = 1024
+height = 1024
+spacing = 0
+margin = 0
+```
+
+This example will generate mytileset.tsx and mytileset.png in the current working directory
+
+
+### Sheet Tileset
+
+A Sheet Tileset is composed of tiles that do not have the same dimensions in one image file
+
+The source is an image
+
 ```toml
 name = 'mytileset'
 type = 'atlas'

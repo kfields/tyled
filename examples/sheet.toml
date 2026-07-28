@@ -1,0 +1,9 @@
+name = 'sheet'
+type = 'sheet'
+
+firstgid = 0
+source = 'mossy-cavern/images/mossy-background-decoration.png'
+width = 1024
+height = 1024
+spacing = 0
+margin = 0

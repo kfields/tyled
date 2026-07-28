@@ -12,3 +12,5 @@ _build
 
 examples/*.png
 examples/*.tsx
+
+*.tiled-session
