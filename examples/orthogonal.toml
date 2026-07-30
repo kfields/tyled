@@ -1,7 +1,5 @@
 name = 'orthogonal'
 type = 'orthogonal'
-
-firstgid = 1
 source = 'platformer/tiles'
 tilewidth = 128
 tileheight = 128

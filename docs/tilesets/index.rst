@@ -13,8 +13,6 @@ A Collection Tileset is composed of tiles with images stored in separate files
 
     name = 'mytileset'
     type = 'collection'
-
-    firstgid = 1
     source = 'sticker-knight/map'
 
 This example will generate mytileset.tsx in the current working directory
@@ -28,8 +26,6 @@ An Orthogonal Tileset is composed of tiles that have the same dimensions in one 
 
     name = 'mytileset'
     type = 'orthogonal'
-
-    firstgid = 1
     source = 'platformer/tiles'
     tilewidth = 128
     tileheight = 128
@@ -48,8 +44,6 @@ An Atlas Tileset is composed of tiles that do not have the same dimensions in on
 
     name = 'mytileset'
     type = 'atlas'
-
-    firstgid = 0
     source = 'sticker-knight/map'
     width = 1024
     height = 1024

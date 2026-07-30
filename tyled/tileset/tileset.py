@@ -22,7 +22,6 @@ class Tileset:
         self.version = "1.2"
         self.tiledversion = "1.3.3"
         self.tiles: list[Tile] = []
-        self.firstgid = 1
         self.columns = 0
         self.margin = 0
         self.width = 0

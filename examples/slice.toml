@@ -1,7 +1,5 @@
 name = 'slice'
 type = 'slice'
-
-firstgid = 0
 source = 'mossy-cavern/images/mossy-background-decoration.png'
 width = 1024
 height = 1024

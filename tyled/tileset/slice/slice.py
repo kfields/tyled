@@ -113,7 +113,7 @@ class SliceTileset(Tileset):
         prefix = self._opt("name_prefix", base)
 
         self.tiles = []
-        gid = int(self.firstgid)
+        id = 0
 
         max_w = 1
         max_h = 1
@@ -125,7 +125,7 @@ class SliceTileset(Tileset):
             crop_path = os.path.join(out_dir, f"{kind}.png")
             crop.save(crop_path)
 
-            tile = Tile(crop_path, gid, kind)
+            tile = Tile(crop_path, id, kind)
 
             # Optional provenance (not required by Tiled)
             tile.sheet_x = x
@@ -134,7 +134,7 @@ class SliceTileset(Tileset):
             tile.sheet_h = h
 
             self.tiles.append(tile)
-            gid += 1
+            id += 1
 
             if tile.width > max_w:
                 max_w = tile.width

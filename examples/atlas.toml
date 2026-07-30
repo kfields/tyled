@@ -1,7 +1,5 @@
 name = 'atlas'
 type = 'atlas'
-
-firstgid = 0
 source = 'sticker-knight/map'
 width = 1024
 height = 1024

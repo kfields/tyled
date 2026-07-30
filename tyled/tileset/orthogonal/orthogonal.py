@@ -2,6 +2,7 @@ import sys
 import os
 import glob
 
+from loguru import logger
 import jinja2
 
 from PIL import Image
@@ -32,17 +33,18 @@ class OrthogonalTileset(Tileset):
 
         self.width = (margin*2) + columns * (tilewidth+(spacing))
         rows = int(tilecount / columns)
+        logger.debug(f"build: columns={columns}, rows={rows}, tilecount={tilecount}, width={self.width}, height={self.height}")
         self.rows = rows = rows + 1 if tilecount % columns > 0 else rows
         self.height = (margin*2) + rows * (tileheight+(spacing))
+        logger.debug(f"build: final rows={self.rows}, height={self.height}")
 
-        gid = self.firstgid
-        for file in files:
+        for id, file in enumerate(files):
             base = os.path.basename(file)
             kind = os.path.splitext(base)[0]
-            self.tiles.append(Tile(file, gid, kind))
-            gid +=1
+            self.tiles.append(Tile(file, id, kind))
 
     def do_bake(self):
+        logger.debug(f"do_bake: width={self.width}, height={self.height}")
         canvas = Image.new('RGBA', (self.width, self.height), (255, 0, 0, 0))
         tiles = self.tiles.copy()
         for i in range(0, self.rows):

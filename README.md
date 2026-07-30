@@ -84,8 +84,6 @@ A Collection Tileset is composed of tiles with images stored in separate files
 ```toml
 name = 'mytileset'
 type = 'collection'
-
-firstgid = 1
 source = 'sticker-knight/map'
 ```
 
@@ -98,8 +96,6 @@ An Orthogonal Tileset is composed of tiles that have the same dimensions in one 
 ```toml
 name = 'mytileset'
 type = 'orthogonal'
-
-firstgid = 1
 source = 'platformer/tiles'
 tilewidth = 128
 tileheight = 128
@@ -119,8 +115,6 @@ The source is a folder that contains multiple images
 ```toml
 name = 'mytileset'
 type = 'atlas'
-
-firstgid = 0
 source = 'sticker-knight/map'
 width = 1024
 height = 1024
@@ -140,8 +134,6 @@ The source is an image
 ```toml
 name = 'mytileset'
 type = 'atlas'
-
-firstgid = 0
 source = 'sticker-knight/map'
 width = 1024
 height = 1024

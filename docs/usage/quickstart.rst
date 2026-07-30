@@ -9,8 +9,6 @@ Create a Tyled Project File
 
     name = 'mytileset'
     type = 'orthogonal'
-
-    firstgid = 1
     source = 'platformer/tiles'
     tilewidth = 128
     tileheight = 128

@@ -26,9 +26,7 @@ class CollectionTileset(Tileset):
         files = sorted(glob.glob(f"{source}/*.png"))
         self.tilecount = tilecount = len(files)
 
-        gid = self.firstgid
-        for file in files:
+        for id, file in enumerate(files):
             base = os.path.basename(file)
             kind = os.path.splitext(base)[0]
-            self.tiles.append(Tile(file, gid, kind))
-            gid += 1
+            self.tiles.append(Tile(file, id, kind))

@@ -1,5 +1,4 @@
 type = 'atlas'
-firstgid = 0
 source = "sticker-knight/map"
 name = "atlas_rotation"
 width = 1024

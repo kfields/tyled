@@ -128,7 +128,7 @@ class SheetTileset(Tileset):
         prefix = self._opt("name_prefix", base)
 
         self.tiles = []
-        gid = int(self.firstgid)
+        id = 0
 
         for i, (x, y, w, h) in enumerate(rects):
             kind = f"{prefix}_{i:04d}"
@@ -138,7 +138,7 @@ class SheetTileset(Tileset):
             crop_path = os.path.join(out_dir, f"{kind}.png")
             crop.save(crop_path)
 
-            tile = Tile(crop_path, gid, kind)
+            tile = Tile(crop_path, id, kind)
 
             # Optional: keep original sheet rect if you ever want it in export/template
             tile.sheet_x = x
@@ -147,7 +147,7 @@ class SheetTileset(Tileset):
             tile.sheet_h = h
 
             self.tiles.append(tile)
-            gid += 1
+            id += 1
 
         self.tilecount = len(self.tiles)
 
