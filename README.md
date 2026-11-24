@@ -204,6 +204,18 @@ anchor = [1, 2]
 Pieces are kept in the `.tsx` as tileset properties (`piece:<name>`, the ids row by row, and
 `anchor:<name>`), so Tiled shows them and tyled reads them back.
 
+A **nine-slice** is a piece with `kind = 'nine_slice'`: exactly three rows of three tiles (corners, edges
+and a centre, no gaps), which a map can stretch to any size from 2 × 2 up by repeating the edges and the
+centre. Its anchor defaults to the centre. Tiny Town's castle courtyard and dirt patch are nine-slices.
+It is kept as one more tileset property, `kind:<name>` = `nine_slice`.
+
+```toml
+[[pieces]]
+name = 'dirt_patch'
+kind = 'nine_slice'
+region = [0, 1, 3, 3]
+```
+
 #### Reading names from a program
 
 ```python
@@ -212,6 +224,7 @@ from tyled.tileset.names import read_tsx
 named = read_tsx("tiny-town.tsx")        # or GridTileset.create(config).named
 named.tile("well")                        # NamedTile(id=104, name='well', properties={...})
 named.piece("house_wood_grey").ids        # ((48, 49, 50), (60, 63, 62), (72, 85, 75))
+named.nine_slice("dirt_patch").stretch(4, 3)  # ((12, 13, 13, 14), (24, 25, 25, 26), (36, 37, 37, 38))
 named.tile("wel")                         # UnknownNameError: no tile named 'wel'; did you mean 'well'?
 ```
 

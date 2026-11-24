@@ -15,6 +15,10 @@
   <property name="anchor:forest_autumn" value="1,1"/>
   <property name="piece:castle_courtyard" value="96,97,98;108,109,110;120,121,122"/>
   <property name="anchor:castle_courtyard" value="1,1"/>
+  <property name="kind:castle_courtyard" value="nine_slice"/>
+  <property name="piece:dirt_patch" value="12,13,14;24,25,26;36,37,38"/>
+  <property name="anchor:dirt_patch" value="1,1"/>
+  <property name="kind:dirt_patch" value="nine_slice"/>
   <property name="piece:castle_gate_house" value="99,100;111,112;123,124"/>
   <property name="anchor:castle_gate_house" value="1,2"/>
   <property name="piece:well_roofed" value="92;104"/>
@@ -45,14 +49,14 @@
  </tile>
  <tile id="3">
   <properties>
-   <property name="name" value="pine_autumn_small"/>
+   <property name="name" value="pine_autumn_top"/>
    <property name="walkable" type="bool" value="false"/>
    <property name="kind" value="tree"/>
   </properties>
  </tile>
  <tile id="4">
   <properties>
-   <property name="name" value="pine_small"/>
+   <property name="name" value="pine_top"/>
    <property name="walkable" type="bool" value="false"/>
    <property name="kind" value="tree"/>
   </properties>
@@ -120,14 +124,14 @@
  </tile>
  <tile id="15">
   <properties>
-   <property name="name" value="pine_autumn_trunk"/>
+   <property name="name" value="pine_autumn_bottom"/>
    <property name="walkable" type="bool" value="false"/>
    <property name="kind" value="tree"/>
   </properties>
  </tile>
  <tile id="16">
   <properties>
-   <property name="name" value="pine_trunk"/>
+   <property name="name" value="pine_bottom"/>
    <property name="walkable" type="bool" value="false"/>
    <property name="kind" value="tree"/>
   </properties>
@@ -712,7 +716,7 @@
  <tile id="109">
   <properties>
    <property name="name" value="castle_floor"/>
-   <property name="walkable" type="bool" value="false"/>
+   <property name="walkable" type="bool" value="true"/>
    <property name="kind" value="castle"/>
   </properties>
  </tile>

@@ -4,7 +4,9 @@ Everything that uses a tileset (a text layout, a generator, an agent) should say
 104". This module holds what a tileset knows about its tiles by name:
 
 * the tiles that have a name, and the typed properties of every tile (``walkable = false``);
-* the pieces: named rectangles of tiles (a house, a tower), each with an anchor.
+* the pieces: named rectangles of tiles (a house, a tower), each with an anchor;
+* the nine-slices: a kind of piece, three by three tiles (corners, edges, centre), that a map can
+  stretch to any size by repeating the edges and the centre (a walled courtyard, a patch of dirt).
 
 It is plain data with no image in it, so it can come from two places and give the same answer:
 from a project file (`NamedTiles.from_spec`) while a tileset is built, and from a ``.tsx`` that tyled
@@ -17,7 +19,9 @@ How the ``.tsx`` holds it:
 * the other properties are Tiled custom properties with Tiled's types (string, int, float, bool);
 * a piece is two custom properties on the *tileset* (Tiled shows those too): ``piece:<name>``, the grid
   of tile ids, rows separated by ``;`` and ids by ``,`` (``-`` for an empty cell), and
-  ``anchor:<name>``, the ``column,row`` of the anchor tile inside the piece.
+  ``anchor:<name>``, the ``column,row`` of the anchor tile inside the piece. A nine-slice is a piece
+  with a third property, ``kind:<name>`` = ``nine_slice``; a piece without one is a plain piece, so
+  files written before nine-slices existed read as they always did.
 
 Tiled's stamps were passed over because Tiled keeps them in its own preferences, not in the tileset
 or the project, so tyled could not see them and they would not travel with the ``.tsx``. A file of
@@ -35,6 +39,8 @@ from typing import Iterable, Mapping
 NAME_PROPERTY = "name"
 PIECE_PREFIX = "piece:"
 ANCHOR_PREFIX = "anchor:"
+KIND_PREFIX = "kind:"
+NINE_SLICE = "nine_slice"
 
 # How many near misses an error offers when a name is misspelled.
 SUGGESTIONS = 3
@@ -98,6 +104,39 @@ class Piece:
         return self.ids[row][column]
 
 
+@dataclass(frozen=True)
+class NineSlice(Piece):
+    """A piece of three by three tiles that can be stretched: corners, edges and a centre.
+
+    It is for things that have a border and an inside, seen from above: a walled courtyard, a patch of
+    dirt in grass. A map asks for the size it needs and gets the corners once each, the edges repeated
+    along the sides and the centre repeated in between (`stretch`). The anchor is the centre tile unless
+    the project file says otherwise.
+    """
+
+    anchor: tuple[int, int] = (1, 1)
+
+    def __post_init__(self):
+        if len(self.ids) != 3 or any(len(row) != 3 for row in self.ids):
+            raise NamedTilesError(f"nine-slice {self.name!r} must be three rows of three tiles")
+        if any(cell is None for row in self.ids for cell in row):
+            raise NamedTilesError(f"nine-slice {self.name!r} can't have gaps")
+
+    def stretch(self, width: int, height: int) -> tuple[tuple[int, ...], ...]:
+        """The grid of tile ids for a `width` by `height` area, row by row from the top.
+
+        The smallest size is 2 by 2, the four corners; each tile beyond that repeats the edge or the
+        centre tile of its row and column. Sizes of 3 by 3 give the piece itself.
+        """
+        if width < 2 or height < 2:
+            raise NamedTilesError(
+                f"nine-slice {self.name!r} can't be {width} × {height}: the smallest size is 2 × 2 (the corners)"
+            )
+        columns = [0] + [1] * (width - 2) + [2]
+        rows = [0] + [1] * (height - 2) + [2]
+        return tuple(tuple(self.ids[r][c] for c in columns) for r in rows)  # type: ignore[misc]
+
+
 class NamedTiles:
     """Lookup of tiles by name and by id, and of pieces by name."""
 
@@ -147,11 +186,21 @@ class NamedTiles:
     # -- pieces
 
     def piece(self, name: str) -> Piece:
-        """The piece called `name`; a misspelled name raises UnknownNameError with the nearest names."""
+        """The piece called `name`; a misspelled name raises UnknownNameError with the nearest names.
+
+        A nine-slice is a piece too, so it is found here (as a `NineSlice`).
+        """
         try:
             return self._pieces[name]
         except KeyError:
             raise _unknown("piece", name, self._pieces) from None
+
+    def nine_slice(self, name: str) -> NineSlice:
+        """The nine-slice called `name`; a piece that is not a nine-slice is an error saying so."""
+        piece = self.piece(name)
+        if not isinstance(piece, NineSlice):
+            raise NamedTilesError(f"{name!r} is a piece, not a nine-slice")
+        return piece
 
     def piece_names(self) -> list[str]:
         return list(self._pieces)
@@ -177,7 +226,8 @@ class NamedTiles:
         only, no name) ``region = [column, row, width, height]``, plus an optional ``name`` and an
         optional ``properties`` table. `defaults` are the properties every tile starts with.
         `pieces` are ``[[pieces]]`` entries: a ``name``, a ``region`` or ``rows`` of tile names (or ids),
-        and an optional ``anchor = [column, row]``.
+        an optional ``anchor = [column, row]`` and an optional ``kind`` (``'nine_slice'`` for a piece of
+        three by three tiles that stretches; the anchor then defaults to the centre).
         """
         defaults = dict(defaults or {})
         for key, value in defaults.items():
@@ -296,7 +346,7 @@ def _piece_from_spec(entry, index, by_name, columns, tilecount) -> Piece:
     name = entry.get("name")
     where = f"pieces entry {index}" + (f" ({name!r})" if isinstance(name, str) else "")
     name = _check_name(name, where)
-    unknown = set(entry) - {"name", "region", "rows", "anchor"}
+    unknown = set(entry) - {"name", "region", "rows", "anchor", "kind"}
     if unknown:
         raise NamedTilesError(f"{where}: unknown keys {sorted(unknown)}")
     if ("region" in entry) == ("rows" in entry):
@@ -310,13 +360,26 @@ def _piece_from_spec(entry, index, by_name, columns, tilecount) -> Piece:
         if len({len(r) for r in rows}) != 1 or not rows[0]:
             raise NamedTilesError(f"{where}: every row of a piece must have the same, non-zero, length")
         grid = [[_resolve_cell(c, by_name, tilecount, where) for c in r] for r in rows]
-    anchor = _pair(entry.get("anchor", [0, 0]), "anchor", where)
+    kind = entry.get("kind", "piece")
+    if kind not in ("piece", NINE_SLICE):
+        raise NamedTilesError(f"{where}: kind must be 'piece' or {NINE_SLICE!r}, not {kind!r}")
+    if kind == NINE_SLICE:
+        _check_nine_slice_grid(grid, where)
+    anchor = _pair(entry.get("anchor", [1, 1] if kind == NINE_SLICE else [0, 0]), "anchor", where)
     height, width = len(grid), len(grid[0])
     if not (0 <= anchor[0] < width and 0 <= anchor[1] < height):
         raise NamedTilesError(f"{where}: anchor {list(anchor)} is outside the piece ({width} × {height} tiles)")
     if grid[anchor[1]][anchor[0]] is None:
         raise NamedTilesError(f"{where}: the anchor is on an empty cell")
-    return Piece(name, tuple(tuple(r) for r in grid), anchor)
+    cls = NineSlice if kind == NINE_SLICE else Piece
+    return cls(name, tuple(tuple(r) for r in grid), anchor)
+
+
+def _check_nine_slice_grid(grid, where):
+    if len(grid) != 3 or len(grid[0]) != 3:
+        raise NamedTilesError(f"{where}: a nine-slice is three rows of three tiles, not {len(grid[0])} × {len(grid)}")
+    if any(cell is None for row in grid for cell in row):
+        raise NamedTilesError(f"{where}: a nine-slice can't have gaps")
 
 
 def _resolve_cell(cell, by_name, tilecount, where):
@@ -395,5 +458,11 @@ def read_tsx(path) -> NamedTiles:
             name = key[len(PIECE_PREFIX):]
             anchor = str(own.get(ANCHOR_PREFIX + name, "0,0"))
             column, row = (int(n) for n in anchor.split(","))
-            pieces.append(Piece(name, decode_ids(str(value)), (column, row)))
+            kind = str(own.get(KIND_PREFIX + name, "piece"))
+            if kind == NINE_SLICE:
+                pieces.append(NineSlice(name, decode_ids(str(value)), (column, row)))
+            elif kind == "piece":
+                pieces.append(Piece(name, decode_ids(str(value)), (column, row)))
+            else:
+                raise NamedTilesError(f"{path}: piece {name!r} has an unknown kind {kind!r}")
     return NamedTiles(tiles, pieces)

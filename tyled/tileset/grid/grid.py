@@ -12,6 +12,9 @@ from tyled.tileset.names import (
     NamedTile,
     NamedTiles,
     NamedTilesError,
+    KIND_PREFIX,
+    NINE_SLICE,
+    NineSlice,
     Piece,
     encode_ids,
     encode_property,
@@ -163,10 +166,13 @@ class GridTileset(Tileset):
 
     @staticmethod
     def _piece_properties(piece: Piece) -> list[GridProperty]:
-        return [
+        found = [
             _property(PIECE_PREFIX + piece.name, encode_ids(piece.ids)),
             _property(ANCHOR_PREFIX + piece.name, f"{piece.anchor[0]},{piece.anchor[1]}"),
         ]
+        if isinstance(piece, NineSlice):
+            found.append(_property(KIND_PREFIX + piece.name, NINE_SLICE))
+        return found
 
     def do_bake(self):
         # Nothing to draw: the image stays where it is and the .tsx points at it.
