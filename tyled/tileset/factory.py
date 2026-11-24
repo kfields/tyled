@@ -3,6 +3,7 @@ from tyled.tileset.orthogonal import OrthogonalTileset
 from tyled.tileset.atlas import AtlasTileset
 from tyled.tileset.sheet import SheetTileset
 from tyled.tileset.slice import SliceTileset
+from tyled.tileset.grid import GridTileset
 
 class TilesetFactory:
     def __init__(self):
@@ -20,3 +21,5 @@ class TilesetFactory:
             return SheetTileset.create(config, options=options)
         elif kind == "slice":
             return SliceTileset.create(config, options=options)
+        elif kind == "grid":
+            return GridTileset.create(config, options=options)

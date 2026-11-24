@@ -22,6 +22,8 @@ rearranged at will, and later Questbots' chapter maps can come from the same too
 2. **`tyled map`:** a map from a text layout: a legend from characters to named tiles, stamps (multi-tile
    pieces such as a house or a castle tower placed by a character), several layers (ground, things on
    it, collision), and an objects layer; written as `.tmj`.
+   Tiles placed rotated or flipped (Tiled's flag bits on a gid), so one fence or road-edge tile serves
+   every direction, which matters with small packs.
 3. **`tyled render` and `tyled check`:** a PNG of a map or a region (so an agent can see its work), and
    checks: walkability from tile properties, objects on free tiles, every place reachable.
 4. **Terrains (Wang sets):** declared in the tileset, so Tiled and `tyled map` pick edges and corners
@@ -37,3 +39,10 @@ rearranged at will, and later Questbots' chapter maps can come from the same too
 2. The planning chat proposed working on files, not the Tiled editor, for the MCP server (step 6):
    Tiled's scripting API runs with the user's full rights (files, processes), which an agent shouldn't
    reach; a server that edits files gets the live view through Tiled's reload.
+
+## Open questions
+
+- **Rotated tiles in a packed atlas** (`--rotation`, from `rectpack`): tyled records `angle="90"` on such a
+  tile in the `.tsx`, which Tiled may not read (it rotates tiles placed in a map, by flag bits, not tiles in
+  a tileset's image). Check in Tiled whether they show upright; if not, unrotate them when writing, or
+  drop the option. Step 0's golden file pins today's output.

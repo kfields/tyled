@@ -1,0 +1,434 @@
+# Kenney's Tiny Town (CC0), used as it is: the tilemap image stays where it is and the .tsx refers
+# to it. Run from this folder:  tyled bake tiny-town.toml
+#
+# Positions are [column, row] in the image, counted from 0 at the top left; id = row * 12 + column.
+# Tiles are walkable unless said otherwise. A piece is a rectangle of tiles with an anchor, the
+# [column, row] inside the piece of the tile a layout's character stands for (a door, say).
+
+name = 'tiny-town'
+type = 'grid'
+source = 'kenney/tiny-town/Tilemap/tilemap.png'
+tilewidth = 16
+tileheight = 16
+spacing = 1
+
+[defaults]
+walkable = true
+
+# ---- Ground
+
+[[tiles]]
+at = [0, 0]
+name = 'grass'
+
+[[tiles]]
+at = [1, 0]
+name = 'grass_tufts'
+
+[[tiles]]
+at = [2, 0]
+name = 'grass_flowers'
+
+# A patch of dirt with grass around it: three rows of three.
+[[tiles]]
+at = [0, 1]
+name = 'dirt_nw'
+
+[[tiles]]
+at = [1, 1]
+name = 'dirt_n'
+
+[[tiles]]
+at = [2, 1]
+name = 'dirt_ne'
+
+[[tiles]]
+at = [0, 2]
+name = 'dirt_w'
+
+[[tiles]]
+at = [1, 2]
+name = 'dirt'
+
+[[tiles]]
+at = [2, 2]
+name = 'dirt_e'
+
+[[tiles]]
+at = [0, 3]
+name = 'dirt_sw'
+
+[[tiles]]
+at = [1, 3]
+name = 'dirt_s'
+
+[[tiles]]
+at = [2, 3]
+name = 'dirt_se'
+
+# ---- Roads
+
+[[tiles]]
+at = [5, 3]
+name = 'road_dirt'
+
+[[tiles]]
+at = [6, 3]
+name = 'road_dirt_worn'
+
+[[tiles]]
+at = [3, 3]
+name = 'road_dirt_edge_w'
+
+[[tiles]]
+at = [4, 3]
+name = 'road_dirt_edge_e'
+
+[[tiles]]
+at = [7, 3]
+name = 'road_cobble'
+
+# ---- Trees, bushes and the forest
+
+[[tiles]]
+at = [3, 0]
+name = 'pine_autumn_small'
+properties = { walkable = false, kind = 'tree' }
+
+[[tiles]]
+at = [4, 0]
+name = 'pine_small'
+properties = { walkable = false, kind = 'tree' }
+
+[[tiles]]
+at = [5, 0]
+name = 'bush'
+properties = { walkable = false, kind = 'bush' }
+
+[[tiles]]
+at = [3, 1]
+name = 'pine_autumn_trunk'
+properties = { walkable = false, kind = 'tree' }
+
+[[tiles]]
+at = [4, 1]
+name = 'pine_trunk'
+properties = { walkable = false, kind = 'tree' }
+
+[[tiles]]
+at = [5, 1]
+name = 'sprout'
+
+[[tiles]]
+at = [3, 2]
+name = 'pine_autumn'
+properties = { walkable = false, kind = 'tree' }
+
+[[tiles]]
+at = [4, 2]
+name = 'pine'
+properties = { walkable = false, kind = 'tree' }
+
+[[tiles]]
+at = [5, 2]
+name = 'mushrooms'
+
+# The two forest blocks (green, autumn) are trees all the way: none of their tiles can be walked on.
+[[tiles]]
+region = [6, 0, 3, 3]
+properties = { walkable = false, kind = 'tree' }
+
+[[tiles]]
+region = [9, 0, 3, 3]
+properties = { walkable = false, kind = 'tree' }
+
+# ---- Houses: roofs, walls, doors and windows. Walls and roofs can't be walked on; the doors can.
+
+[[tiles]]
+region = [0, 4, 8, 3]
+properties = { walkable = false, kind = 'house' }
+
+[[tiles]]
+region = [0, 7, 8, 1]
+properties = { walkable = false, kind = 'house' }
+
+[[tiles]]
+at = [2, 6]
+name = 'doorway_wood'
+properties = { walkable = true, kind = 'door' }
+
+[[tiles]]
+at = [6, 6]
+name = 'doorway_stone'
+properties = { walkable = true, kind = 'door' }
+
+[[tiles]]
+at = [1, 7]
+name = 'door_wood'
+properties = { walkable = true, kind = 'door' }
+
+[[tiles]]
+at = [2, 7]
+name = 'door_wood_arch'
+properties = { walkable = true, kind = 'door' }
+
+[[tiles]]
+at = [3, 7]
+name = 'door_wood_right'
+properties = { walkable = true, kind = 'door' }
+
+[[tiles]]
+at = [5, 7]
+name = 'door_stone'
+properties = { walkable = true, kind = 'door' }
+
+[[tiles]]
+at = [6, 7]
+name = 'door_stone_arch'
+properties = { walkable = true, kind = 'door' }
+
+[[tiles]]
+at = [7, 7]
+name = 'door_stone_right'
+properties = { walkable = true, kind = 'door' }
+
+[[tiles]]
+at = [0, 7]
+name = 'window_wood'
+
+[[tiles]]
+at = [4, 7]
+name = 'window_stone'
+
+[[tiles]]
+at = [3, 4]
+name = 'chimney_grey'
+
+[[tiles]]
+at = [7, 4]
+name = 'chimney_red'
+
+[[tiles]]
+at = [3, 5]
+name = 'gable_grey'
+
+[[tiles]]
+at = [7, 5]
+name = 'gable_red'
+
+# ---- Castle: the courtyard blocks, the wall, the gate
+
+[[tiles]]
+region = [0, 8, 3, 3]
+properties = { walkable = false, kind = 'castle' }
+
+[[tiles]]
+region = [3, 8, 4, 1]
+properties = { walkable = false, kind = 'castle' }
+
+[[tiles]]
+region = [3, 9, 4, 1]
+properties = { walkable = false, kind = 'castle' }
+
+[[tiles]]
+region = [5, 10, 2, 1]
+properties = { walkable = false, kind = 'castle' }
+
+# The gate's passage is open: the jambs are at the edges of these two tiles.
+[[tiles]]
+at = [3, 10]
+name = 'castle_gate_left'
+properties = { walkable = true, kind = 'castle' }
+
+[[tiles]]
+at = [4, 10]
+name = 'castle_gate_right'
+properties = { walkable = true, kind = 'castle' }
+
+[[tiles]]
+at = [1, 9]
+name = 'castle_floor'
+
+[[tiles]]
+at = [4, 9]
+name = 'castle_portcullis'
+
+[[tiles]]
+at = [6, 10]
+name = 'castle_wall'
+
+[[tiles]]
+at = [5, 10]
+name = 'castle_wall_slit'
+
+[[tiles]]
+at = [4, 8]
+name = 'castle_parapet'
+
+[[tiles]]
+at = [7, 8]
+name = 'castle_ladder'
+properties = { walkable = false, kind = 'castle' }
+
+# ---- Fences, signs and the things that stand about
+
+[[tiles]]
+region = [8, 3, 3, 4]
+properties = { walkable = false, kind = 'fence' }
+
+[[tiles]]
+region = [11, 3, 1, 3]
+properties = { walkable = false, kind = 'fence' }
+
+[[tiles]]
+at = [9, 4]
+name = 'cart'
+properties = { walkable = false, kind = 'cart' }
+
+[[tiles]]
+at = [9, 5]
+name = 'fence_gap'
+properties = { walkable = true, kind = 'fence' }
+
+[[tiles]]
+at = [11, 6]
+name = 'sign'
+properties = { walkable = false, kind = 'sign' }
+
+[[tiles]]
+at = [8, 7]
+name = 'well_roof'
+properties = { walkable = false, kind = 'well' }
+
+[[tiles]]
+at = [8, 8]
+name = 'well'
+properties = { walkable = false, kind = 'well' }
+
+[[tiles]]
+at = [10, 7]
+name = 'beehive'
+properties = { walkable = false, kind = 'beehive' }
+
+[[tiles]]
+at = [11, 7]
+name = 'target'
+properties = { walkable = false, kind = 'target' }
+
+[[tiles]]
+at = [9, 7]
+name = 'coin'
+
+[[tiles]]
+at = [9, 8]
+name = 'bomb'
+
+[[tiles]]
+at = [10, 8]
+name = 'log'
+
+[[tiles]]
+at = [11, 8]
+name = 'bag'
+
+[[tiles]]
+at = [7, 9]
+name = 'pickaxe'
+
+[[tiles]]
+at = [8, 9]
+name = 'pitchfork'
+
+[[tiles]]
+at = [9, 9]
+name = 'key'
+
+[[tiles]]
+at = [10, 9]
+name = 'bow'
+
+[[tiles]]
+at = [11, 9]
+name = 'arrow'
+
+[[tiles]]
+at = [7, 10]
+name = 'axe'
+
+[[tiles]]
+at = [8, 10]
+name = 'hammer'
+
+[[tiles]]
+at = [9, 10]
+name = 'scythe'
+
+[[tiles]]
+at = [10, 10]
+name = 'barrel'
+properties = { walkable = false, kind = 'barrel' }
+
+[[tiles]]
+at = [11, 10]
+name = 'barrel_water'
+properties = { walkable = false, kind = 'barrel' }
+
+# ---- Pieces
+
+# Houses: two rows of roof over a row of wall, anchored on the door. Cells are names or, for tiles
+# that have none, ids (id = row * 12 + column).
+[[pieces]]
+name = 'house_wood_grey'
+rows = [[48, 49, 50], [60, 'gable_grey', 62], [72, 'door_wood', 75]]
+anchor = [1, 2]
+
+[[pieces]]
+name = 'house_wood_grey_wide'
+rows = [[48, 'chimney_grey', 49, 50], [60, 61, 'gable_grey', 62], [72, 'window_wood', 'door_wood', 75]]
+anchor = [2, 2]
+
+[[pieces]]
+name = 'house_stone_red'
+rows = [[52, 53, 54], [64, 'gable_red', 66], [76, 'door_stone', 79]]
+anchor = [1, 2]
+
+[[pieces]]
+name = 'house_stone_red_wide'
+rows = [[52, 'chimney_red', 53, 54], [64, 65, 'gable_red', 66], [76, 'window_stone', 'door_stone', 79]]
+anchor = [2, 2]
+
+[[pieces]]
+name = 'forest_green'
+region = [6, 0, 3, 3]
+anchor = [1, 1]
+
+[[pieces]]
+name = 'forest_autumn'
+region = [9, 0, 3, 3]
+anchor = [1, 1]
+
+[[pieces]]
+name = 'castle_courtyard'
+region = [0, 8, 3, 3]
+anchor = [1, 1]
+
+[[pieces]]
+name = 'castle_gate_house'
+region = [3, 8, 2, 3]
+anchor = [1, 2]
+
+# Rows of names, for what the image doesn't lay out in a rectangle.
+[[pieces]]
+name = 'well_roofed'
+rows = [['well_roof'], ['well']]
+anchor = [0, 1]
+
+[[pieces]]
+name = 'pine_tall'
+rows = [['pine_small'], ['pine_trunk']]
+anchor = [0, 1]
+
+[[pieces]]
+name = 'pine_autumn_tall'
+rows = [['pine_autumn_small'], ['pine_autumn_trunk']]
+anchor = [0, 1]

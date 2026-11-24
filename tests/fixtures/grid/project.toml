@@ -1,0 +1,51 @@
+name = 'grid'
+type = 'grid'
+source = 'grid.png'
+tilewidth = 8
+tileheight = 8
+spacing = 1
+margin = 2
+
+[defaults]
+walkable = true
+
+[[tiles]]
+at = [0, 0]
+name = 'grass'
+
+[[tiles]]
+at = [1, 0]
+name = 'water'
+properties = { walkable = false, depth = 2, speed = 0.5 }
+
+[[tiles]]
+id = 5
+name = 'stall'
+properties = { kind = 'food_stall', walkable = false }
+
+# Properties for several tiles at once, and text that XML has to escape.
+[[tiles]]
+region = [2, 0, 2, 1]
+properties = { label = 'a "quoted" <b> & more' }
+
+[[tiles]]
+at = [0, 2]
+name = 'roof_left'
+
+[[tiles]]
+at = [1, 2]
+name = 'roof_right'
+
+[[tiles]]
+at = [2, 2]
+name = 'door'
+
+[[pieces]]
+name = 'house'
+region = [0, 1, 3, 2]
+anchor = [2, 1]
+
+[[pieces]]
+name = 'roof'
+rows = [['roof_left', 'roof_right'], ['door', '']]
+anchor = [0, 1]

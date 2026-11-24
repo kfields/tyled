@@ -2,7 +2,7 @@
 Tilesets
 ********
 
-Tyled currently supports three different kinds of Tilesets:
+Tyled supports these kinds of Tilesets:
 
 Collection Tileset
 ==================
@@ -62,3 +62,37 @@ If you want a more compact spritesheet and your game engine supports it use the 
     [options]
     rotation = true
 
+Grid Tileset
+============
+
+A Grid Tileset is an image that is already a grid of equal tiles (Kenney's tilemaps, say). The image is
+used as it is: nothing is repacked or copied, and the tileset refers to it by a path relative to where it
+is written. Columns are read from the image, and so are spacing and margin when the project gives neither
+and only one grid fits.
+
+.. code-block:: toml
+
+    name = 'tiny-town'
+    type = 'grid'
+    source = 'kenney/tiny-town/Tilemap/tilemap.png'
+    tilewidth = 16
+    tileheight = 16
+    spacing = 1
+
+    [defaults]
+    walkable = true
+
+    [[tiles]]
+    at = [8, 8]
+    name = 'well'
+    properties = { walkable = false, kind = 'well' }
+
+    [[pieces]]
+    name = 'roofed_well'
+    rows = [['well_roof'], ['well']]
+    anchor = [0, 1]
+
+Tiles are named by ``at = [column, row]`` or ``id``; the name is written as the tile property ``name``.
+Properties are written as Tiled custom properties with Tiled's types. Pieces are kept as tileset
+properties (``piece:<name>`` and ``anchor:<name>``). See the README for the details, and
+``tyled.tileset.names.read_tsx`` for reading them back.

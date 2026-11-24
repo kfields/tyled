@@ -1,0 +1,19 @@
+{% macro property(p, indent) -%}
+{{ indent }}<property name="{{ p.name|e }}"{% if p.type %} type="{{ p.type }}"{% endif %}
+{%- if '\n' in p.value %}>{{ p.value|e }}</property>{% else %} value="{{ p.value|e }}"/>{% endif %}
+{%- endmacro -%}
+<?xml version="1.0" encoding="UTF-8"?>
+<tileset version="{{ version }}" tiledversion="{{ tiledversion }}" name="{{ name|e }}" tilewidth="{{ tilewidth }}" tileheight="{{ tileheight }}"
+{%- if spacing %} spacing="{{ spacing }}"{% endif %}
+{%- if margin %} margin="{{ margin }}"{% endif %} tilecount="{{ tilecount }}" columns="{{ columns }}">
+{% if tileset_properties %} <properties>
+{% for p in tileset_properties %}{{ property(p, '  ') }}
+{% endfor %} </properties>
+{% endif %} <image source="{{ image_source|e }}" width="{{ width }}" height="{{ height }}"/>
+{% for tile in tiles %} <tile id="{{ tile.id }}">
+  <properties>
+{% for p in tile.properties %}{{ property(p, '   ') }}
+{% endfor %}  </properties>
+ </tile>
+{% endfor %}</tileset>
+
