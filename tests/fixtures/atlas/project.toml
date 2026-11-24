@@ -1,0 +1,7 @@
+name = 'atlas'
+type = 'atlas'
+source = 'tiles'
+width = 32
+height = 32
+spacing = 0
+margin = 0

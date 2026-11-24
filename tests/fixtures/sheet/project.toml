@@ -1,0 +1,7 @@
+name = 'sheet'
+type = 'sheet'
+source = 'sprites.png'
+width = 64
+height = 64
+spacing = 0
+margin = 0

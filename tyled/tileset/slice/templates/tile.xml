@@ -1,3 +1,0 @@
-    <tile id="{{tile.id}}" type="{{tile.type}}">
-        <image width="{{tile.width}}" height="{{tile.height}}" source="{{tile.source}}"/>
-    </tile>    

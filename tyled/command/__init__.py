@@ -1,14 +1,16 @@
-import os
-import click
+import tomllib
 
-import toml
+import click
+from loguru import logger
 
 from tyled.tileset.factory import TilesetFactory
 
 def create_tileset(filename, **options):
-    config = toml.load(filename)
+    # tomllib insists on binary mode: it decodes the file as UTF-8 itself.
+    with open(filename, "rb") as fh:
+        config = tomllib.load(fh)
     tileset = TilesetFactory().produce(config, options=options)
-    print(vars(tileset.options))
+    logger.debug(f"options: {vars(tileset.options)}")
     return tileset
 
 @click.group()

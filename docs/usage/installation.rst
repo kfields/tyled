@@ -38,20 +38,26 @@ Navigate to the new directory which contains the repository
 
         cd tyled
 
-Create a Python 3 virtual environment called `env`
+Tyled needs Python 3.12 or newer. Create a virtual environment called `.venv`
 
 .. code:: bash
 
-        python3 -m venv env
-        
+        python3 -m venv .venv
+
 Activate the environment
 
 .. code:: bash
 
-        source env/bin/activate
-        
-Install required packages
+        source .venv/bin/activate
+
+Install tyled, editable, with what the tests need
 
 .. code:: bash
 
-        pip install -r requirements.txt
+        pip install -e ".[test]"
+
+Run the tests
+
+.. code:: bash
+
+        python -m pytest

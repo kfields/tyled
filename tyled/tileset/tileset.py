@@ -16,9 +16,13 @@ class Options:
             setattr(self, key, kwargs[key])
 
 
+# What a bake does when nobody says otherwise: the same defaults as the CLI's flags.
+DEFAULT_OPTIONS = {"save": True, "show": False, "rotation": False}
+
+
 class Tileset:
     def __init__(self, *config, **kwargs):
-        self.options = {"save": True}
+        self.options = {}
         self.version = "1.2"
         self.tiledversion = "1.3.3"
         self.tiles: list[Tile] = []
@@ -34,16 +38,19 @@ class Tileset:
         self.searchpath = []
         self.add_template_path("templates")
 
+        # Options come from three places. Where they disagree the project file wins over
+        # the caller's (the command line's), which wins over the defaults; README says so.
+        caller_options = {}
         for dictionary in config:
             for key in dictionary:
                 setattr(self, key, dictionary[key])
         for key in kwargs:
             if key == "options":
-                options = kwargs[key]
-                options.update(self.options)
-                self.options = options
+                caller_options = kwargs[key]
+            else:
+                setattr(self, key, kwargs[key])
 
-            setattr(self, key, kwargs[key])
+        self.options = {**DEFAULT_OPTIONS, **caller_options, **self.options}
 
         self.options = Options(self.options)
 
@@ -86,7 +93,8 @@ class Tileset:
         rendered = template.render(config)
         # print(rendered)
         filename = f"{self.name}.tsx"
-        with open(filename, "w") as fh:
+        # Explicit encoding and newline so the bytes are the same on every platform.
+        with open(filename, "w", encoding="utf-8", newline="\n") as fh:
             fh.write(rendered)
 
     def add_template_path(self, path):

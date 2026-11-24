@@ -1,0 +1,8 @@
+name = 'orthogonal'
+type = 'orthogonal'
+source = 'tiles'
+tilewidth = 8
+tileheight = 8
+spacing = 0
+margin = 1
+columns = 3

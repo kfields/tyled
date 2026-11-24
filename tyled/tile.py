@@ -6,7 +6,10 @@ class Tile:
         self.id = id
         self.type = kind
 
+        # load() reads the pixels now, which also closes the file; left lazy, every
+        # tile would hold its file open until the whole bake is over.
         self.image = image = Image.open(source)
+        image.load()
         self.position = (0,0)
         self.width, self.height = image.size
         self.angle = None
