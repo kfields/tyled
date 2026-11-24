@@ -14,3 +14,5 @@ examples/*.png
 examples/*.tsx
 
 *.tiled-session
+.venv/
+test-results/
