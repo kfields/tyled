@@ -63,14 +63,17 @@ Default options are --save, --no-show, --no-rotation
 tiles (see [Names and properties](#names-and-properties)), and a `.tmj` that opens in Tiled and can be
 regenerated, enlarged and rearranged by editing the text.
 
-        tyled map town.toml [--output town.tmj]
+        tyled map town.toml [--output town.tmj] [--merged]
 
-It writes `<name>.tmj` in the current folder, or the file given with `--output`. From a program:
+It writes `<name>.tmj` in the current folder, or the file given with `--output`. (A layout that is a grid of
+areas writes a Tiled world and a map for each area instead: see [Areas and a world](#areas-and-a-world).)
+From a program:
 
 ```python
-from tyled.map import build, MapProject
+from tyled.map import build, build_all, MapProject
 
 build("town.toml")                       # writes town.tmj, returns its path
+build_all("town.toml")                   # the same, returning every path written (a list)
 MapProject(config, base=".").to_dict()   # or the map as Tiled's JSON structure, without a file
 ```
 
@@ -100,13 +103,14 @@ project, and says where it is relative to the `.tmj`.
 
 One character a tile, every line the same length (a ragged line is an error naming it). `.` is a cell
 with nothing on it but the fill, and the filler inside a piece. A character the legend doesn't know is an
-error naming it, its line and its column.
+error naming it, its line and its column. For a large map the layout can be a grid of smaller files:
+see [Areas and a world](#areas-and-a-world).
 
 ### The legend
 
 ```toml
 [legend]
-r = 'road_cobble'                                   # a name: a tile, a piece or a nine-slice
+r = 'road_dirt'                                     # a name: a tile, a piece or a nine-slice
 Y = { tile = 'pine', flip = 'h' }                   # turned or mirrored
 H = { piece = 'house_wood_grey' }
 C = { nine_slice = 'castle_courtyard' }
@@ -120,11 +124,17 @@ S = { tile = 'cart', layer = 'objects', name = 'food_stall', type = 'food_stall'
   as one picture.
 * **A piece** is placed so that its anchor lands on the character (a house's door where `H` is). The
   piece's other cells in the layout must hold the same character or `.`; a piece that runs off the map,
-  or lies over another piece or a nine-slice, is an error naming both. When a piece's other cells are
+  or lies over another piece or a nine-slice, is an error naming both (except on a nine-slice's edge,
+  below). When a piece's other cells are
   drawn with its own character, put the anchor first in reading order (a piece whose anchor is at the
   top left, say); otherwise draw those cells as `.`.
 * **A nine-slice** takes the cells of its character, which must make one full rectangle (anything else
-  is an error), and is stretched to it, at least 2 × 2. Nothing else may stand inside the rectangle.
+  is an error), and is stretched to it, at least 2 × 2. Nothing else may stand inside the rectangle,
+  except that **a piece may stand on its edge** (not at a corner): draw the piece's character in the
+  edge's cells and the piece replaces the edge's tiles there, so a gate or doorway opens in a walled
+  courtyard. The edge may not be left open with nothing in it, and a piece in the centre is an error.
+  A piece may also lie partly outside the rectangle and reach in to its edge (its cells inside may be
+  drawn as the nine-slice's own character).
 * A name that two tilesets share needs `tileset = '<tileset name>'` in the entry.
 
 **Layers.** A placed tile goes on the layer the entry's `layer` names, else the one in the tile's own
@@ -142,25 +152,58 @@ tile can be an object, and it can be flipped or turned 180 degrees but not by a 
 
 The output is deterministic: the same project, layout and tilesets give the same bytes.
 
+### Areas and a world
+
+A big map is easier to draw, read and redo in pieces. The layout may be a **grid of layout files**, one
+per area, all the same size (a 3 × 3 town as nine files of 30 × 20 characters):
+
+```toml
+layout = [
+    ['forest.txt', 'castle.txt', 'farm.txt'],
+    ['meadow.txt', 'square.txt', 'houses.txt'],
+    ['river.txt', 'lane.txt', 'orchard.txt'],
+]
+```
+
+The areas are laid side by side and built as one map, so a legend, a fill and the tilesets are shared. Then
+
+        tyled map town.toml [--output town.world] [--merged]
+
+writes each area as a map of its own, named after its layout file (`forest.tmj`, ...), and a Tiled
+**world** `town.world` (or the `--output` file, which must end in `.world`) that places them side by
+side, so Tiled shows and edits the whole town together (load the `.world` from Tiled's World menu). With `--merged` it also writes `town.tmj`, the whole town as one map, for programs that load
+a single map; it is exactly the areas side by side. In a program: `build_all("town.toml", merged=True)`.
+
+A piece or nine-slice may not cross an area's edge: that is an error naming both areas, and a
+nine-slice's rectangle that touches the edge of two areas is one too (leave a `.` between them). Errors
+count lines and columns in the area's own file and name it. Every area needs a layout file with a name
+of its own, which gives its map's name.
+
 ### Example: a town on Tiny Town
 
-`examples/town.toml` and `examples/town.txt` draw a 30 × 20 town: grass, cobbled roads, a dirt patch (a
-nine-slice), houses with their doors on the road, trees, a castle courtyard (a nine-slice) with its gate
-house, and four objects: a food stall (`S`), a bench (`b`), the well (`w`) and the target (`x`).
+`examples/town.toml` and `examples/town.txt` draw a 30 × 20 town: grass, dirt roads, a dirt patch (a
+nine-slice) inside a fence, houses with their doors on the road, trees, a castle courtyard (a nine-slice)
+with a gateway standing in its south wall, and four objects: a food stall (`S`), a bench (`b`), the well
+(`w`) and the target (`x`).
+
+The fence is built from two of Tiny Town's tiles, turned: `1` to `4` are the corner tile turned 0, 90,
+180 and 270 degrees, `-` is the horizontal run and `|` the same tile turned 90 degrees, and `g` is
+the gap that serves as the yard's gate. Roads are plain dirt (`road_dirt`) until terrains give them
+edges.
 
 ```
 .....,....*...................
-T.......*............CCCCCCCC.
-Y.DDDDD..............CCCCCCCC.
-..DDDDD..T..F........CCCCCCCC.
-..DDDDD..........f...CCCCCCCC.
-..DDDDD..Y...........CCCCCCCC.
-....x......,.........CCCCCCCC.
-...,....Y.*...................
-.T...t......P..,...T..*.....Y.
-.......*..............,..G....
-.,............w..........r....
-....H....h..S...b..A.....r....
+T1-----2*............CCCCCCCC.
+Y|DDDDD|.............CCCCCCCC.
+.|DDDDD|.T..F........CCCCCCCC.
+.|DDDDD|.........f...CCCCCCCC.
+.|DDDDD|.Y...........CCCCCCCC.
+.4--g--3...,.........CCCGGCCC.
+...,..x.Y.*.............rr....
+.T...t......P..,...T..*.rr..Y.
+.......*..............,.rr....
+.,............w.........rr....
+....H....h..S...b..A....rr....
 rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr
 rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr
 ..*....,......rr..............

@@ -334,6 +334,19 @@ def test_the_tiny_town_tileset_names_the_things_the_town_is_made_of(tmp_path, mo
     assert len(named.tiles()) == 132  # the default reaches every tile
 
 
+def test_the_tiny_town_fence_tiles_are_named_as_pieces_gaps_and_posts(tmp_path, monkeypatch):
+    work = bake_tiny_town(tmp_path, monkeypatch)
+    named = read_tsx(work / "tiny-town.tsx")
+    ids = {"fence_nw": 44, "fence_t": 45, "fence_ne": 46, "fence_post_n": 47, "fence_w": 56, "fence_e": 58,
+           "fence_v": 59, "fence_sw": 68, "fence_gap": 69, "fence_se": 70, "fence_post_s": 71,
+           "fence_post_w": 80, "fence_h": 81, "fence_post_e": 82}
+    for name, id in ids.items():
+        assert named.tile(name).id == id, name
+        assert named.tile(name).properties["kind"] == "fence"
+        assert named.tile(name).properties["walkable"] is (name == "fence_gap")
+    assert named.piece("castle_gateway").ids == ((123, 124),)
+
+
 def test_the_tiny_town_pieces_are_grids_of_ids_anchored_on_their_doors(tmp_path, monkeypatch):
     work = bake_tiny_town(tmp_path, monkeypatch)
     named = read_tsx(work / "tiny-town.tsx")

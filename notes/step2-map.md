@@ -24,6 +24,8 @@ an object layer `objects` whose tile objects' `type` names a smart object (`food
     map or over another is an error naming both;
   - **a nine-slice:** a rectangle of the same character becomes the nine-slice stretched to it (a castle
     courtyard as big as the rectangle); a shape that isn't a rectangle is an error.
+    A piece may stand on the rectangle's edge (not a corner) and replaces the edge's tiles there, so a gate
+    or doorway opens in a walled courtyard; a piece in the centre is refused.
 - **C4** Layers: each placed tile goes on a layer the legend or its tile's properties choose. By default a
   tile with `walkable = false` goes on `obstacles` and the rest on `ground`, the layer names set in the
   project file, so Neighbots' convention comes out without saying it for every entry.
@@ -57,3 +59,9 @@ an object layer `objects` whose tile objects' `type` names a smart object (`food
 4. Areas and a Tiled world (C9): the planning chat proposed a layout of smaller files, since models
    miscount lines in a 90-column grid; Kurt pointed to Tiled's worlds (2026-11-24: "Tiled has a feature
    called worlds which fits in with this I think"), which show several maps placed together.
+5. Kurt asked (after C1 to C8) that a piece placed on a nine-slice's edge replace those edge tiles, so the
+   town's castle gate opens in its courtyard's wall; a piece inside the centre stays refused. The layout
+   draws the piece's own character on the edge (or the nine-slice's, for cells the piece reaches into).
+6. C9 as built: the areas are laid side by side and placed as one map, then cut, so the merged map is the
+   areas side by side by construction. Each area's map is named after its layout file; `tyled map` writes
+   the `.world` (and the maps beside it), and the merged `<name>.tmj` only with `--merged`.

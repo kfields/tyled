@@ -24,7 +24,8 @@ extra = ['decor']   # above the ground, below what blocks
 
 [legend]
 # Ground
-r = 'road_cobble'
+# Roads are plain dirt until terrains (step 4) give them edges: cobble reads as gravel.
+r = 'road_dirt'
 ',' = 'grass_tufts'
 '*' = 'grass_flowers'
 D = { nine_slice = 'dirt_patch' }
@@ -35,10 +36,22 @@ h = { piece = 'house_stone_red' }
 A = { piece = 'house_wood_grey_wide' }
 B = { piece = 'house_stone_red_wide' }
 
-# The castle: a courtyard stretched to its rectangle, and its gate house below it. The gate's arch can be
-# walked through but is see-through, so it goes on decor and the grass shows under it.
+# The castle: a courtyard stretched to its rectangle, with its gateway standing on the south wall (G, two
+# cells wide, replaces the wall's tiles there). The gateway can be walked through but is see-through, so
+# it goes on decor and the grass shows under it.
 C = { nine_slice = 'castle_courtyard' }
-G = { piece = 'castle_gate_house', walkable_layer = 'decor' }
+G = { piece = 'castle_gateway', walkable_layer = 'decor' }
+
+# A fenced yard round the dirt patch. One tile serves every direction: fence_nw turned for the other
+# three corners, fence_h turned for the vertical sides. The gap is its gate; it is see-through, so
+# it goes on decor too.
+'1' = 'fence_nw'
+'2' = { tile = 'fence_nw', rotate = 90 }
+'3' = { tile = 'fence_nw', rotate = 180 }
+'4' = { tile = 'fence_nw', rotate = 270 }
+'-' = 'fence_h'
+'|' = { tile = 'fence_h', rotate = 90 }
+g = { tile = 'fence_gap', walkable_layer = 'decor' }
 
 # Trees: single pines (Y is the same tile turned the other way round), tall pines, and two forests.
 T = { tile = 'pine' }

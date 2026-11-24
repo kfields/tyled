@@ -282,15 +282,74 @@ properties = { walkable = false, kind = 'fence' }
 region = [11, 3, 1, 3]
 properties = { walkable = false, kind = 'fence' }
 
+# Fence pieces, as the image lays them out. A corner is named for where it stands in a pen (nw: its bars
+# run east and south), a run for the way it goes, a post for the side of the run that it ends on. One
+# tile serves several directions turned in a map: fence_h turned 90 degrees is a vertical run, and
+# fence_nw turned 90, 180 and 270 degrees is the ne, se and sw corners.
 [[tiles]]
-at = [9, 4]
-name = 'cart'
-properties = { walkable = false, kind = 'cart' }
+at = [8, 3]
+name = 'fence_nw'
 
+[[tiles]]
+at = [9, 3]
+name = 'fence_t'   # a run along the top with a post going down: where a cross fence meets it
+
+[[tiles]]
+at = [10, 3]
+name = 'fence_ne'
+
+[[tiles]]
+at = [8, 5]
+name = 'fence_sw'
+
+[[tiles]]
+at = [10, 5]
+name = 'fence_se'
+
+[[tiles]]
+at = [8, 4]
+name = 'fence_w'   # a vertical run at the left of its tile, for a pen's west side
+
+[[tiles]]
+at = [10, 4]
+name = 'fence_e'   # a vertical run at the right of its tile, for a pen's east side
+
+[[tiles]]
+at = [11, 4]
+name = 'fence_v'
+
+[[tiles]]
+at = [9, 6]
+name = 'fence_h'
+
+# Posts: the ends of a run, with the bar going away from the post.
+[[tiles]]
+at = [8, 6]
+name = 'fence_post_w'
+
+[[tiles]]
+at = [10, 6]
+name = 'fence_post_e'
+
+[[tiles]]
+at = [11, 3]
+name = 'fence_post_n'
+
+[[tiles]]
+at = [11, 5]
+name = 'fence_post_s'
+
+# A gap: two posts with nothing between them, a gate that is always open, in a horizontal run. It can be
+# walked through (and is see-through, so a map puts it above the ground).
 [[tiles]]
 at = [9, 5]
 name = 'fence_gap'
 properties = { walkable = true, kind = 'fence' }
+
+[[tiles]]
+at = [9, 4]
+name = 'cart'
+properties = { walkable = false, kind = 'cart' }
 
 [[tiles]]
 at = [11, 6]
@@ -425,6 +484,13 @@ region = [0, 1, 3, 3]
 name = 'castle_gate_house'
 region = [3, 8, 2, 3]
 anchor = [1, 2]
+
+# The gate's passage alone, one tile high: it fits in the courtyard's wall, where a piece may stand on the
+# edge of a nine-slice, and replaces the wall's tiles there. (The gate house above is for a wall of its own.)
+[[pieces]]
+name = 'castle_gateway'
+rows = [['castle_gate_left', 'castle_gate_right']]
+anchor = [0, 0]
 
 # Rows of names, for what the image doesn't lay out in a rectangle.
 [[pieces]]

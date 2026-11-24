@@ -21,6 +21,8 @@
   <property name="kind:dirt_patch" value="nine_slice"/>
   <property name="piece:castle_gate_house" value="99,100;111,112;123,124"/>
   <property name="anchor:castle_gate_house" value="1,2"/>
+  <property name="piece:castle_gateway" value="123,124"/>
+  <property name="anchor:castle_gateway" value="0,0"/>
   <property name="piece:well_roofed" value="92;104"/>
   <property name="anchor:well_roofed" value="0,1"/>
   <property name="piece:pine_tall" value="4;16"/>
@@ -302,24 +304,28 @@
  </tile>
  <tile id="44">
   <properties>
+   <property name="name" value="fence_nw"/>
    <property name="walkable" type="bool" value="false"/>
    <property name="kind" value="fence"/>
   </properties>
  </tile>
  <tile id="45">
   <properties>
+   <property name="name" value="fence_t"/>
    <property name="walkable" type="bool" value="false"/>
    <property name="kind" value="fence"/>
   </properties>
  </tile>
  <tile id="46">
   <properties>
+   <property name="name" value="fence_ne"/>
    <property name="walkable" type="bool" value="false"/>
    <property name="kind" value="fence"/>
   </properties>
  </tile>
  <tile id="47">
   <properties>
+   <property name="name" value="fence_post_n"/>
    <property name="walkable" type="bool" value="false"/>
    <property name="kind" value="fence"/>
   </properties>
@@ -376,6 +382,7 @@
  </tile>
  <tile id="56">
   <properties>
+   <property name="name" value="fence_w"/>
    <property name="walkable" type="bool" value="false"/>
    <property name="kind" value="fence"/>
   </properties>
@@ -389,12 +396,14 @@
  </tile>
  <tile id="58">
   <properties>
+   <property name="name" value="fence_e"/>
    <property name="walkable" type="bool" value="false"/>
    <property name="kind" value="fence"/>
   </properties>
  </tile>
  <tile id="59">
   <properties>
+   <property name="name" value="fence_v"/>
    <property name="walkable" type="bool" value="false"/>
    <property name="kind" value="fence"/>
   </properties>
@@ -451,6 +460,7 @@
  </tile>
  <tile id="68">
   <properties>
+   <property name="name" value="fence_sw"/>
    <property name="walkable" type="bool" value="false"/>
    <property name="kind" value="fence"/>
   </properties>
@@ -464,12 +474,14 @@
  </tile>
  <tile id="70">
   <properties>
+   <property name="name" value="fence_se"/>
    <property name="walkable" type="bool" value="false"/>
    <property name="kind" value="fence"/>
   </properties>
  </tile>
  <tile id="71">
   <properties>
+   <property name="name" value="fence_post_s"/>
    <property name="walkable" type="bool" value="false"/>
    <property name="kind" value="fence"/>
   </properties>
@@ -526,18 +538,21 @@
  </tile>
  <tile id="80">
   <properties>
+   <property name="name" value="fence_post_w"/>
    <property name="walkable" type="bool" value="false"/>
    <property name="kind" value="fence"/>
   </properties>
  </tile>
  <tile id="81">
   <properties>
+   <property name="name" value="fence_h"/>
    <property name="walkable" type="bool" value="false"/>
    <property name="kind" value="fence"/>
   </properties>
  </tile>
  <tile id="82">
   <properties>
+   <property name="name" value="fence_post_e"/>
    <property name="walkable" type="bool" value="false"/>
    <property name="kind" value="fence"/>
   </properties>

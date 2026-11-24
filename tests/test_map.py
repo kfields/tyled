@@ -70,6 +70,10 @@ name = 'house'
 rows = [['wall', 'wall'], ['wall', 'door']]
 anchor = [1, 1]
 [[pieces]]
+name = 'gate'
+rows = [['arch', 'door']]
+anchor = [0, 0]
+[[pieces]]
 name = 'tall'
 rows = [['lamp'], ['flower']]
 anchor = [0, 1]
@@ -366,6 +370,67 @@ def test_a_nine_slice_can_be_turned_before_it_is_stretched(world):
     assert layer(tmj, "obstacles")[0] == [10 + 1 + H, 9 + 1 + H, 8 + 1 + H]
 
 
+# ---- C3: a piece on a nine-slice's edge replaces the edge's tiles: a gate in a wall
+
+PLAZA = ["NNNNN", "NNNNN", "NNNNN"]
+
+
+def test_a_piece_drawn_on_a_nine_slices_edge_replaces_the_edge_tiles(world):
+    layout = "NNNNN\nNNNNN\nNNGGN\n"
+    tmj = world(layout, {"N": "plaza", "G": "gate"}).to_dict()
+    # The bottom wall (ids 16, 17, 18) is open where the gate stands; the gate's tiles are walkable ground.
+    assert layer(tmj, "obstacles")[2] == [16 + 1, 17 + 1, 0, 0, 18 + 1]
+    assert layer(tmj, "ground")[2] == [0, 0, gid("arch"), gid("door"), 0]
+    assert layer(tmj, "obstacles")[0] == [8 + 1, 9 + 1, 9 + 1, 9 + 1, 10 + 1]  # the rest is as stretched
+
+
+def test_a_piece_on_the_edge_works_on_any_side(world):
+    layout = "NNNNN\nGNNNN\nGNNNN\nNNNNN\n"  # the gate turned to stand on the west edge
+    tmj = world(layout, {"N": "plaza", "G": {"piece": "gate", "rotate": 90}}).to_dict()
+    obstacles = layer(tmj, "obstacles")
+    assert [row[0] for row in obstacles] == [8 + 1, 0, 0, 16 + 1]
+    assert [row[1] for row in obstacles][1:3] == [0, 0]  # the centre is ground, not wall
+
+
+def test_a_piece_whose_other_cells_are_drawn_as_the_nine_slice_replaces_those_too(world):
+    layout = "NNNNN\nNNNNN\nNNGNN\n"  # the gate's second cell is at an N of the bottom edge
+    tmj = world(layout, {"N": "plaza", "G": "gate"}).to_dict()
+    assert layer(tmj, "obstacles")[2] == [16 + 1, 17 + 1, 0, 0, 18 + 1]
+    assert layer(tmj, "ground")[2][2:4] == [gid("arch"), gid("door")]
+
+
+def test_a_piece_standing_outside_a_nine_slice_can_reach_into_its_edge(world):
+    layout = "NNNNN\nNNNNN\nNNNNN\n..t..\n"  # the lamp over the flower: its lamp is on the bottom edge
+    tmj = world(layout, {"N": "plaza", "t": "tall"}, layers={"extra": ["decor"]}).to_dict()
+    assert layer(tmj, "obstacles")[2] == [16 + 1, 17 + 1, 0, 17 + 1, 18 + 1]
+    assert layer(tmj, "ground")[2][2] == gid("lamp") and layer(tmj, "decor")[3][2] == gid("flower")
+
+
+def test_a_piece_in_the_centre_of_a_nine_slice_is_refused(world):
+    with pytest.raises(MapError, match=r"piece 'gate'.*inside it.*not in its centre"):
+        world("NNNNN\nNNGGN\nNNNNN\n", {"N": "plaza", "G": "gate"}).to_dict()
+
+
+def test_a_piece_reaching_into_the_centre_from_the_edge_is_refused(world):
+    with pytest.raises(MapError, match=r"piece 'tall'.*where the layout has 'N'"):
+        world("NNNNN\nNNNNN\nNNtNN\n", {"N": "plaza", "t": "tall"}).to_dict()
+
+
+def test_a_piece_at_a_corner_of_a_nine_slice_is_refused(world):
+    with pytest.raises(MapError, match="not in its centre or a corner"):
+        world("NNNNN\nNNNNN\nGGNNN\n", {"N": "plaza", "G": "gate"}).to_dict()
+
+
+def test_an_edge_that_is_open_with_no_piece_in_it_is_refused(world):
+    with pytest.raises(MapError, match="a hole at line 3, column 3 that no piece fills"):
+        world("NNNNN\nNNNNN\nNN.NN\n", {"N": "plaza"}).to_dict()
+
+
+def test_a_tile_or_a_second_nine_slice_on_the_edge_is_not_a_piece_and_is_refused(world):
+    with pytest.raises(MapError, match="isn't a rectangle"):
+        world("NNNNN\nNNNNN\nNNrNN\n", {"N": "plaza", "r": "road"}).to_dict()
+
+
 # ---- C4: layers
 
 def test_a_tile_that_blocks_goes_on_obstacles_and_the_rest_on_ground(world):
@@ -559,7 +624,7 @@ def test_the_town_is_30_by_20_with_neighbots_layers_and_objects(town):
 def test_the_town_houses_have_their_doors_on_the_road_and_walls_that_block(town):
     tmj = MapProject(tomllib.loads((town / "town.toml").read_text()), base=town).to_dict()
     ground, obstacles = layer(tmj, "ground"), layer(tmj, "obstacles")
-    door_wood, road = 85 + 1, 43 + 1  # Tiled's gids: ids 85 (door_wood) and 43 (road_cobble), plus 1
+    door_wood, road = 85 + 1, 41 + 1  # Tiled's gids: ids 85 (door_wood) and 41 (road_dirt), plus 1
     assert ground[11][4] == door_wood and ground[12][4] == road  # the door is on the ground, the road below
     assert obstacles[10][4] != 0 and obstacles[9][4] != 0  # the wall above the door blocks
     assert all(obstacles[r][c] == 0 for r in (12, 13, 18, 19) for c in range(30))  # the roads are clear
@@ -570,3 +635,23 @@ def test_the_town_courtyard_is_a_stretched_nine_slice_with_a_floor_you_can_walk_
     ground, obstacles = layer(tmj, "ground"), layer(tmj, "obstacles")
     assert obstacles[1][21] == 96 + 1 and obstacles[1][28] == 98 + 1 and obstacles[6][28] == 122 + 1
     assert ground[3][24] == 109 + 1 and obstacles[3][24] == 0
+
+
+def test_the_town_gateway_opens_the_courtyards_south_wall_and_the_road_leads_to_it(town):
+    tmj = MapProject(tomllib.loads((town / "town.toml").read_text()), base=town).to_dict()
+    ground, decor, obstacles = layer(tmj, "ground"), layer(tmj, "decor"), layer(tmj, "obstacles")
+    assert [decor[6][c] for c in (24, 25)] == [123 + 1, 124 + 1]  # castle_gate_left and _right, walkable, above the ground
+    assert [obstacles[6][c] for c in (23, 24, 25, 26)] == [121 + 1, 0, 0, 121 + 1]  # the wall stops at the gateway
+    assert all(ground[r][c] == 41 + 1 for r in range(7, 12) for c in (24, 25))  # dirt road down to the street
+
+
+def test_the_town_fence_is_one_corner_and_one_run_turned(town):
+    tmj = MapProject(tomllib.loads((town / "town.toml").read_text()), base=town).to_dict()
+    obstacles = layer(tmj, "obstacles")
+    corner, run = 3 * 12 + 8 + 1, 6 * 12 + 9 + 1  # fence_nw (8, 3) and fence_h (9, 6), as Tiled gids
+    assert obstacles[1][1] == corner  # the north west corner as it is
+    assert obstacles[1][7] == corner | D | H  # turned 90 degrees clockwise: the north east corner
+    assert obstacles[6][7] == corner | H | V and obstacles[6][1] == corner | D | V
+    assert obstacles[1][3] == run and obstacles[3][1] == run | D | H  # the vertical sides are the run turned
+    assert layer(tmj, "decor")[6][4] == 5 * 12 + 9 + 1  # the gap is the yard's gate, walkable and above the ground
+    assert obstacles[6][4] == 0

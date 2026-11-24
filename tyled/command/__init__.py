@@ -3,7 +3,7 @@ import tomllib
 import click
 from loguru import logger
 
-from tyled.map import MapError, build as build_map
+from tyled.map import MapError, build_all as build_map_files
 from tyled.tileset.factory import TilesetFactory
 from tyled.tileset.names import NamedTilesError
 
@@ -39,12 +39,20 @@ def export(ctx, filename):
 
 @cli.command("map")
 @click.option('--output', '-o', type=click.Path(dir_okay=False), default=None,
-              help='The .tmj to write; default <name>.tmj in the current folder.')
+              help='The .tmj to write; default <name>.tmj in the current folder. '
+                   'For a grid of areas, the .world to write (default <name>.world), with the areas beside it.')
+@click.option('--merged/--no-merged', default=False,
+              help='For a grid of areas, also write the whole town as one map, <name>.tmj beside the world.')
 @click.argument('filename')
-def map_command(filename, output):
-    """Build a Tiled map (.tmj) from a map project file and its text layout."""
+def map_command(filename, output, merged):
+    """Build a Tiled map (.tmj) from a map project file and its text layout.
+
+    A layout that is a grid of area files makes a map for each area and a Tiled world (.world)
+    that places them side by side.
+    """
     try:
-        path = build_map(filename, output)
+        paths = build_map_files(filename, output, merged)
     except (MapError, NamedTilesError) as error:
         raise click.ClickException(str(error))
-    logger.info(f"wrote {path}")
+    for path in paths:
+        logger.info(f"wrote {path}")
