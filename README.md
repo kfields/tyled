@@ -222,6 +222,84 @@ Build it from `examples/`:
 
 The legend is in [`examples/town.toml`](examples/town.toml).
 
+## Looking at maps and tilesets
+
+A map can't be judged from its file. `tyled render`, `tyled sheet` and `tyled check` let a person, an agent
+or a test see what was built.
+
+### Render a map
+
+        tyled render town.tmj [--output town.png] [--scale 2] [--region X,Y,W,H] [--layers ground,decor] [--labels] [--grid]
+
+draws a `.tmj` (or a `.world`, as one map) to a PNG, transparent where nothing is drawn: every visible tile
+layer in order, rotations and flips applied as Tiled applies them, tile objects where Tiled draws them (the
+origin is the bottom left, they are scaled to their size and turned about that corner, and drawn from
+the top down), enlarged `--scale` times with nearest-neighbour so pixel art stays sharp (default 2). The PNG is
+written to `<map name>.png` in the current folder unless `--output` says otherwise. The same map always
+gives the same bytes.
+
+- `--region x,y,w,h` draws only that part, counted in tiles; a region that runs off the map is an error.
+- `--layers` names the layers to draw (a hidden layer is drawn when named); the map's order is kept.
+- `--labels` outlines every object and writes its name above it; `--grid` draws the tile grid.
+
+The tilesets the map names are read from their `.tsx` and the images beside them (bake them first).
+
+### Draw a tileset as a contact sheet
+
+        tyled sheet tiny-town.tsx [--output tiny-town-sheet.png] [--scale 4] [--columns 12] [--mark walkable=false]
+
+Every tile is enlarged with its id and name under it, so a name can be checked against its art at a glance.
+Tiles with the marked property (`walkable = false` unless `--mark` says otherwise, `--mark none` for no
+marking) get a red border. Each piece and nine-slice is outlined in a colour of its own and numbered, with a key
+at the bottom. A grid tileset keeps the layout of its image.
+
+### Check a map as a place
+
+        tyled check town.tmj [--project town.toml] [--start X,Y|NAME] [--json]
+
+reads the map's tiles' properties and reports each problem with where it is. `MAP` may be a `.tmj`, a
+`.world` (checked as one map) or a map project (`.toml`, which is then also the project). Exit status is
+0 for a map with no problems, 1 when anything is wrong, and 2 when the command couldn't run (a file that isn't
+there, a start off the map); `--json` prints `{"ok": false, "findings": [...]}` for programs, each finding
+with `kind`, `message`, `x`, `y` (tiles; null for the map as a whole), `layer`, `object` and `details`.
+
+What the checks read, from the tileset's tile properties:
+
+- `walkable = false` blocks a cell; a tile without it is walkable. A cell is walkable when some layer has a
+  tile on it and none of them blocks. An object blocks when its tile says `walkable = false` (or it has a
+  `walkable` property of its own) and then also blocks the cells it covers.
+- `kind = 'door'` makes a tile a door, and `opens = 'north' | 'south' | 'east' | 'west'` says which side it
+  opens to as the tile is drawn (`south`, the tile below, if it says nothing); a door placed turned or flipped
+  opens to the turned side.
+
+| kind | what it says |
+| --- | --- |
+| `object_on_blocked_tile` | an object that doesn't block stands where nothing can be walked on |
+| `object_enclosed` | an object that blocks has no walkable tile beside it |
+| `region_cut_off` | walkable tiles that can't be reached from the largest walkable area (or from `--start`, a tile or an object's name); `details` has the count, bounds and the objects inside |
+| `nothing_walkable` | no tile on the map can be walked on |
+| `door_blocked` | the tile in front of a door can't be walked on |
+| `door_bad_side` | a door's `opens` isn't one of the four sides |
+| `unnamed_tile` | a tile with no name that isn't in a piece (one finding for each tile on a layer, with every position) |
+| `unknown_tile` | a gid that no tileset of the map has |
+| `undeclared_layer` | a layer the project doesn't declare (only with `--project`, or when the map is a project) |
+
+### From a program
+
+The library returns what the commands print:
+
+```python
+from tyled.render import render_map, render_sheet, save_png
+from tyled.check import check_map
+
+image = render_map("town.tmj", scale=4, region=(2, 3, 10, 8), labels=True)   # a Pillow image
+save_png(image, "town.png")                                                  # the same bytes every time
+save_png(render_sheet("tiny-town.tsx"), "sheet.png")
+
+for finding in check_map("town.tmj", project="town.toml", start="well"):
+    print(finding.kind, finding.x, finding.y, finding.message)               # finding.to_dict() for JSON
+```
+
 ## Projects
 
 Tyled Projects are defined using TOML files.

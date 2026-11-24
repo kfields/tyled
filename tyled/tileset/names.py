@@ -429,6 +429,36 @@ def decode_ids(text: str):
     return tuple(tuple(None if c == "-" else int(c) for c in row.split(",")) for row in text.split(";"))
 
 
+def named_from_properties(tile_properties: Mapping[int, Mapping], own: Mapping, where="tileset") -> NamedTiles:
+    """The names, properties and pieces of a tileset, from the custom properties Tiled keeps.
+
+    `tile_properties` maps a tile id to its properties (the name among them, as Tiled shows it) and `own`
+    is the tileset's own properties, where the pieces are. `read_tsx` reads these from a ``.tsx``; a
+    ``.tsj`` or a tileset inside a map carries the same properties as JSON, which comes through here too.
+    """
+    tiles = []
+    for id, props in tile_properties.items():
+        found = dict(props)
+        name = found.pop(NAME_PROPERTY, None)
+        if found or name is not None:
+            tiles.append(NamedTile(int(id), None if name is None else str(name), found))
+
+    pieces = []
+    for key, value in own.items():
+        if key.startswith(PIECE_PREFIX):
+            name = key[len(PIECE_PREFIX):]
+            anchor = str(own.get(ANCHOR_PREFIX + name, "0,0"))
+            column, row = (int(n) for n in anchor.split(","))
+            kind = str(own.get(KIND_PREFIX + name, "piece"))
+            if kind == NINE_SLICE:
+                pieces.append(NineSlice(name, decode_ids(str(value)), (column, row)))
+            elif kind == "piece":
+                pieces.append(Piece(name, decode_ids(str(value)), (column, row)))
+            else:
+                raise NamedTilesError(f"{where}: piece {name!r} has an unknown kind {kind!r}")
+    return NamedTiles(tiles, pieces)
+
+
 def read_tsx(path) -> NamedTiles:
     """Read the names, properties and pieces of a ``.tsx`` back, as tyled writes them."""
     root = ET.parse(path).getroot()
@@ -444,25 +474,7 @@ def read_tsx(path) -> NamedTiles:
             found[prop.get("name")] = decode_property(prop.get("type"), text)
         return found
 
-    tiles = []
+    tiles = {}
     for element in root.findall("tile"):
-        found = properties(element)
-        name = found.pop(NAME_PROPERTY, None)
-        if found or name is not None:
-            tiles.append(NamedTile(int(element.get("id", "0")), None if name is None else str(name), found))
-
-    own = properties(root)
-    pieces = []
-    for key, value in own.items():
-        if key.startswith(PIECE_PREFIX):
-            name = key[len(PIECE_PREFIX):]
-            anchor = str(own.get(ANCHOR_PREFIX + name, "0,0"))
-            column, row = (int(n) for n in anchor.split(","))
-            kind = str(own.get(KIND_PREFIX + name, "piece"))
-            if kind == NINE_SLICE:
-                pieces.append(NineSlice(name, decode_ids(str(value)), (column, row)))
-            elif kind == "piece":
-                pieces.append(Piece(name, decode_ids(str(value)), (column, row)))
-            else:
-                raise NamedTilesError(f"{path}: piece {name!r} has an unknown kind {kind!r}")
-    return NamedTiles(tiles, pieces)
+        tiles[int(element.get("id", "0"))] = properties(element)
+    return named_from_properties(tiles, properties(root), where=str(path))
