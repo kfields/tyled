@@ -57,6 +57,128 @@ Run the tests
 
 Default options are --save, --no-show, --no-rotation
 
+## Maps
+
+`tyled map` turns a text layout into a Tiled map: a character a tile, a legend from characters to named
+tiles (see [Names and properties](#names-and-properties)), and a `.tmj` that opens in Tiled and can be
+regenerated, enlarged and rearranged by editing the text.
+
+        tyled map town.toml [--output town.tmj]
+
+It writes `<name>.tmj` in the current folder, or the file given with `--output`. From a program:
+
+```python
+from tyled.map import build, MapProject
+
+build("town.toml")                       # writes town.tmj, returns its path
+MapProject(config, base=".").to_dict()   # or the map as Tiled's JSON structure, without a file
+```
+
+### The map project
+
+A map project is a TOML file. Its paths are relative to the file's own folder.
+
+```toml
+name = 'town'                  # the map is written as town.tmj
+tilewidth = 16
+tileheight = 16
+layout = 'town.txt'
+tilesets = ['tiny-town.toml']  # tileset projects (grid kind) or .tsx files, firstgids in this order
+fill = 'grass'                 # a tile under everything on the ground layer (optional)
+
+[layers]                       # these are the defaults; Neighbots reads exactly these
+ground = 'ground'
+obstacles = 'obstacles'
+objects = 'objects'
+extra = []                     # more tile layers, between ground and obstacles, bottom first
+```
+
+A tileset given as a `.toml` must have been baked (`tyled bake`): the map refers to the `.tsx` beside the
+project, and says where it is relative to the `.tmj`.
+
+### The layout
+
+One character a tile, every line the same length (a ragged line is an error naming it). `.` is a cell
+with nothing on it but the fill, and the filler inside a piece. A character the legend doesn't know is an
+error naming it, its line and its column.
+
+### The legend
+
+```toml
+[legend]
+r = 'road_cobble'                                   # a name: a tile, a piece or a nine-slice
+Y = { tile = 'pine', flip = 'h' }                   # turned or mirrored
+H = { piece = 'house_wood_grey' }
+C = { nine_slice = 'castle_courtyard' }
+w = { tile = 'well', layer = 'objects' }            # a tile object
+S = { tile = 'cart', layer = 'objects', name = 'food_stall', type = 'food_stall' }
+```
+
+* **A tile** is placed where its character is. `rotate` is a clockwise `0`, `90`, `180` or `270`; `flip` is
+  `'h'`, `'v'` or `'hv'`, done after the rotation. They are written as Tiled's flip flags on the gid, so
+  one fence or road-edge tile serves every direction. A piece or nine-slice can be turned too: it is turned
+  as one picture.
+* **A piece** is placed so that its anchor lands on the character (a house's door where `H` is). The
+  piece's other cells in the layout must hold the same character or `.`; a piece that runs off the map,
+  or lies over another piece or a nine-slice, is an error naming both. When a piece's other cells are
+  drawn with its own character, put the anchor first in reading order (a piece whose anchor is at the
+  top left, say); otherwise draw those cells as `.`.
+* **A nine-slice** takes the cells of its character, which must make one full rectangle (anything else
+  is an error), and is stretched to it, at least 2 × 2. Nothing else may stand inside the rectangle.
+* A name that two tilesets share needs `tileset = '<tileset name>'` in the entry.
+
+**Layers.** A placed tile goes on the layer the entry's `layer` names, else the one in the tile's own
+`layer` property, else `obstacles` if the tile has `walkable = false` and `ground` if not. A piece's tiles
+are each placed by their own properties, so a house's walls block and its door is ground. A walkable tile
+that is partly see-through (a gate's arch) can go above the ground with `walkable_layer = 'decor'` (a layer
+named in `layers.extra`), so that the fill shows through it. A layer that the project doesn't name is an
+error.
+
+**Objects.** A tile whose layer is the objects layer becomes a tile object: positioned as Tiled positions
+tile objects (`x` at the tile's left, `y` at its bottom), named by the entry's `name` (else the tile's
+name) and typed by the entry's `type` (else the tile's `kind` property). The type is written as both
+`type` and `class` (Tiled 1.9 renamed one to the other). Objects are numbered in reading order. Only a
+tile can be an object, and it can be flipped or turned 180 degrees but not by a quarter.
+
+The output is deterministic: the same project, layout and tilesets give the same bytes.
+
+### Example: a town on Tiny Town
+
+`examples/town.toml` and `examples/town.txt` draw a 30 × 20 town: grass, cobbled roads, a dirt patch (a
+nine-slice), houses with their doors on the road, trees, a castle courtyard (a nine-slice) with its gate
+house, and four objects: a food stall (`S`), a bench (`b`), the well (`w`) and the target (`x`).
+
+```
+.....,....*...................
+T.......*............CCCCCCCC.
+Y.DDDDD..............CCCCCCCC.
+..DDDDD..T..F........CCCCCCCC.
+..DDDDD..........f...CCCCCCCC.
+..DDDDD..Y...........CCCCCCCC.
+....x......,.........CCCCCCCC.
+...,....Y.*...................
+.T...t......P..,...T..*.....Y.
+.......*..............,..G....
+.,............w..........r....
+....H....h..S...b..A.....r....
+rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr
+rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr
+..*....,......rr..............
+.T...........,rr..t....T.t....
+......*.....Y.rr..............
+....H....h....rr.....B.....H..
+rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr
+rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr
+```
+
+Build it from `examples/`:
+
+        cd examples
+        tyled bake tiny-town.toml
+        tyled map town.toml
+
+The legend is in [`examples/town.toml`](examples/town.toml).
+
 ## Projects
 
 Tyled Projects are defined using TOML files.

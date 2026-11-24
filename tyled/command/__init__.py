@@ -3,7 +3,9 @@ import tomllib
 import click
 from loguru import logger
 
+from tyled.map import MapError, build as build_map
 from tyled.tileset.factory import TilesetFactory
+from tyled.tileset.names import NamedTilesError
 
 def create_tileset(filename, **options):
     # tomllib insists on binary mode: it decodes the file as UTF-8 itself.
@@ -34,3 +36,15 @@ def bake(ctx, filename, **options):
 def export(ctx, filename):
     tileset = create_tileset(filename)
     tileset.export()
+
+@cli.command("map")
+@click.option('--output', '-o', type=click.Path(dir_okay=False), default=None,
+              help='The .tmj to write; default <name>.tmj in the current folder.')
+@click.argument('filename')
+def map_command(filename, output):
+    """Build a Tiled map (.tmj) from a map project file and its text layout."""
+    try:
+        path = build_map(filename, output)
+    except (MapError, NamedTilesError) as error:
+        raise click.ClickException(str(error))
+    logger.info(f"wrote {path}")

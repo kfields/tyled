@@ -36,7 +36,14 @@ an object layer `objects` whose tile objects' `type` names a smart object (`food
   with grass, roads, a dirt patch, houses (pieces, doors on the road), trees, a castle courtyard
   (nine-slice) with its gate, and objects (a food stall, a bench, the well, the target); the README shows
   its layout and how to build it.
-- **C8** Tests: each legend kind placed, with rotation and flip; a piece by its anchor, off the map and
+- **C9** Areas and a Tiled world: the layout may be a grid of layout files, one per area, each the same
+  size (a 3 × 3 town as nine 30 × 20 files: `layout = [["forest.txt", "castle.txt", ...], ...]`), so
+  each area can be drawn, read and redone on its own. Then tyled writes each area as its own map and a
+  Tiled **world** (`.world`) placing them side by side, so Tiled shows and edits the whole town together;
+  and, with an option, one merged map of the whole town, for programs that load a single map (Neighbots
+  does today). A piece or nine-slice may not cross an area's edge (an error naming both areas).
+- **C8** Tests: each legend kind placed, areas and the world file (positions, the merged map equal to
+  the areas side by side), with rotation and flip; a piece by its anchor, off the map and
   overlapping; a nine-slice stretched and a non-rectangle refused; layers by walkability; objects'
   positions and types; the example against a golden `.tmj`; unknown characters and ragged lines refused;
   and step 0's and step 1's golden files unchanged.
@@ -47,3 +54,6 @@ an object layer `objects` whose tile objects' `type` names a smart object (`food
 2. The planning chat proposed Neighbots' layer convention as tyled's default (`ground`, `obstacles`,
    `objects`), configurable, so the first real user needs no extra settings and others can rename.
 3. Placing tiles rotated or flipped is in this step (`notes/plan.md`'s note): small packs need it.
+4. Areas and a Tiled world (C9): the planning chat proposed a layout of smaller files, since models
+   miscount lines in a 90-column grid; Kurt pointed to Tiled's worlds (2026-11-24: "Tiled has a feature
+   called worlds which fits in with this I think"), which show several maps placed together.

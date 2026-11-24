@@ -1,0 +1,55 @@
+# A small town (30 × 20 tiles) on Kenney's Tiny Town, drawn as text in town.txt.
+# Bake the tileset first, then the map, from this folder:
+#
+#     tyled bake tiny-town.toml
+#     tyled map town.toml
+#
+# Paths are relative to this file. Tiny Town's tiles, pieces and nine-slices are named in tiny-town.toml.
+
+name = 'town'
+tilewidth = 16
+tileheight = 16
+layout = 'town.txt'
+tilesets = ['tiny-town.toml']
+
+# Grass under everything: the layout draws only what is on top of it.
+fill = 'grass'
+
+# The layers Neighbots reads. A tile with walkable = false goes on obstacles, any other on ground.
+[layers]
+ground = 'ground'
+obstacles = 'obstacles'
+objects = 'objects'
+extra = ['decor']   # above the ground, below what blocks
+
+[legend]
+# Ground
+r = 'road_cobble'
+',' = 'grass_tufts'
+'*' = 'grass_flowers'
+D = { nine_slice = 'dirt_patch' }
+
+# Houses: pieces, anchored on their doors, which stand on the road. A, B are the wide ones.
+H = { piece = 'house_wood_grey' }
+h = { piece = 'house_stone_red' }
+A = { piece = 'house_wood_grey_wide' }
+B = { piece = 'house_stone_red_wide' }
+
+# The castle: a courtyard stretched to its rectangle, and its gate house below it. The gate's arch can be
+# walked through but is see-through, so it goes on decor and the grass shows under it.
+C = { nine_slice = 'castle_courtyard' }
+G = { piece = 'castle_gate_house', walkable_layer = 'decor' }
+
+# Trees: single pines (Y is the same tile turned the other way round), tall pines, and two forests.
+T = { tile = 'pine' }
+Y = { tile = 'pine', flip = 'h' }
+t = { piece = 'pine_tall' }
+P = { piece = 'pine_autumn_tall' }
+F = { piece = 'forest_green' }
+f = { piece = 'forest_autumn' }
+
+# Objects: tile objects on the objects layer, named and typed for the game.
+w = { tile = 'well', layer = 'objects' }                                          # type 'well', from the tile's kind
+x = { tile = 'target', layer = 'objects' }                                        # type 'target'
+S = { tile = 'cart', layer = 'objects', name = 'food_stall', type = 'food_stall' }
+b = { tile = 'log', layer = 'objects', name = 'bench', type = 'bench' }
